@@ -1,67 +1,81 @@
 # Universal AI MasterClass Platform
 
-![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge)
-![Copyright: All Rights Reserved](https://img.shields.io/badge/Copyright-All_Rights_Reserved-darkred.svg?style=for-the-badge)
-![Status: Production Ready](https://img.shields.io/badge/Status-Production_Ready-blue.svg?style=for-the-badge)
+<div align="center">
 
-**Universal AI MasterClass Platform**, yapay zeka destekli, çok dilli (TR/EN) ve dinamik müfredat yapısına sahip yeni nesil bir e-öğrenme (LMS) sistemidir. Kullanıcılara statik içerik sunmanın ötesinde, eksik konuları analiz eden, derinlemesine araştırma yapabilen ve kendini sürekli güncelleyen bir "AI Eğitmen" mimarisine sahiptir.
+![License: Proprietary](https://img.shields.io/badge/License-PROPRIETARY-red.svg?style=for-the-badge&logo=unlicense)
+![Copyright: All Rights Reserved](https://img.shields.io/badge/Copyright-All_Rights_Reserved-darkred.svg?style=for-the-badge&logo=expertsexchange)
+![Status: Production Ready](https://img.shields.io/badge/Status-Enterprise_Grade-blue.svg?style=for-the-badge&logo=cloudflare)
 
-## 🚀 Temel Özellikler
+**Gelişmiş Yapay Zeka Destekli, Polimorfik Eğitim ve Dokümantasyon Sistemi**
 
-### 🧠 Polimorfik AI Eğitmeni
-Sistem, seçilen kursa göre (Cloudflare, TypeScript, Data Science vb.) eğitmen kimliğini değiştirir.
-- **Cloudflare Modunda:** Network mühendisi ve güvenlik uzmanı gibi davranır.
-- **Data Science Modunda:** Akademik veri bilimci tonunda konuşur.
-- **TypeScript Modunda:** Senior Frontend Architect seviyesinde kod yazar.
-
-### 🌍 Çoklu Dil Desteği & Lokalizasyon
-- Tek tıkla **Türkçe (TR)** ve **İngilizce (EN)** arasında geçiş.
-- Tüm arayüz, müfredat başlıkları ve AI tarafından üretilen içerik anında hedeflenen dile çevrilir.
-- Otomatik dil algılama ve kültürel bağlama uygun anlatım.
-
-### ⚡ Dinamik Müfredat Genişletme (Curriculum Expansion)
-Yapay zeka, mevcut konu başlıklarını tarayarak "Eksik Parçaları" (Missing Puzzle Pieces) bulur.
-- Kullanıcı tek tuşla müfredata **ileri seviye (Expert)** konular ekleyebilir.
-- Statik değil, yaşayan bir eğitim sistemi sunar.
-
-### 🔬 Deep Dive Research (Derinlemesine Araştırma) Modu
-Standart eğitimlerin ötesine geçer.
-- **Akademik Derinlik:** İç mekanizmalar (internals), performans analizleri ve edge-case senaryoları.
-- **Production-Ready Kodlar:** Sadece "Hello World" değil, prodüksiyon seviyesinde örnekler.
-
-### 🛠️ Teknik Mimari
-- **Frontend:** React 19, TailwindCSS, Lucide Icons.
-- **AI Core:** Google Gemini 2.5 Flash & Pro Models.
-- **State Management:** Complex Context & Mutable Curriculum State.
-- **Document Generation:** HTML2PDF entegrasyonu ile anlık PDF kitapçık üretimi.
-
-## 📦 Mevcut MasterClass Modülleri
-
-1.  **Cloudflare MasterClass:** Edge Network, WAF, Workers, Zero Trust.
-2.  **TypeScript MasterClass:** Advanced Types, Generics, Utility Types.
-3.  **Data Science MasterClass:** Python, Pandas, Machine Learning, Scikit-Learn.
-4.  **Search Engine Architecture:** Inverted Index, Vector Search, Elasticsearch.
-5.  **Recommendation Systems:** Matrix Factorization, Collaborative Filtering.
+</div>
 
 ---
 
-## ⚖️ Legal Warning & License (Yasal Uyarı)
+## ⚠️ LEGAL NOTICE & INTELLECTUAL PROPERTY
 
-**THIS SOFTWARE IS PROPRIETARY AND NOT OPEN SOURCE.**
+**STOP AND READ CAREFULLY.**
 
-Copyright © 2024. All Rights Reserved.
+This software repository contains **PROPRIETARY SOURCE CODE** owned by the author. It is **NOT** Open Source (OSS).
 
-Access to the source code provided in this repository is granted for **Educational, Evaluation, and Portfolio Review purposes only**.
+Access to this code is granted strictly for **educational examination** and **portfolio review** purposes.
 
-### 🚫 Strictly Prohibited Actions:
-1.  **Commercial Use:** You may NOT use this code for any commercial purpose, SaaS, or paid service.
-2.  **Redistribution:** You may NOT copy, fork to public repositories, or distribute this code.
-3.  **Modification:** You may NOT modify or build derivative works based on this software.
-4.  **AI Training:** You may NOT use this code to train Artificial Intelligence models or LLMs.
+### ⛔ STRICTLY PROHIBITED ACTIONS
+Under the terms of the accompanying [LICENSE](LICENSE), you are strictly forbidden from:
 
-For detailed terms, please refer to the [LICENSE](LICENSE) file in this repository. 
+1.  **COMMERCIAL USE:** You may NOT use, sell, sub-license, or monetize this code or any derivative works.
+2.  **REDISTRIBUTION:** You may NOT fork this repository publicly, copy files, or host them elsewhere.
+3.  **AI TRAINING:** You may NOT use this codebase to train, fine-tune, or benchmark any Artificial Intelligence models (LLMs).
+4.  **DERIVATIVE WORKS:** You may NOT build new products based on this architecture without written permission.
 
-*Unauthorized use will be subject to legal action under international copyright laws.*
+*Any unauthorized use, reproduction, or distribution will be met with immediate legal action to the fullest extent of applicable copyright laws.*
 
 ---
-*Developed with High-End Engineering Principles.*
+
+## 🚀 Proje Hakkında (About the Project)
+
+**Universal AI MasterClass Platform**, klasik LMS (Learning Management System) mantığını yıkan, yapay zeka tabanlı dinamik bir "Bilgi Üretim Motoru"dur.
+
+Sistem, özellikle **Cloudflare Ekosistemi** ve modern yazılım mimarileri üzerine uzmanlaşmış, kendini sürekli güncelleyen ve "Eksik Parçaları" (Missing Puzzle Pieces) otomatik tamamlayan bir yapıya sahiptir.
+
+### 🌟 Öne Çıkan Özellikler
+
+#### 1. Cloudflare 0'dan Uzmanlığa (Zero to Hero)
+Statik dokümanların ötesinde, Cloudflare'in tüm araçlarını (WAF, Workers, R2, Zero Trust, Tunnel) kapsayan interaktif yapı.
+- **Deep Dive Mode:** Yüzeysel tanımlar yerine, "Request Flow", "V8 Isolate Architecture" gibi mühendislik detaylarına iner.
+- **Real-World Scenarios:** "Production'da bu ayar neden patlar?" sorusuna yanıt verir.
+
+#### 2. Polimorfik AI Eğitmeni
+Seçilen kursa göre yapay zeka (Gemini 2.5) kişiliğini değiştirir:
+- *Cloudflare Modu:* Senior Network Architect.
+- *Data Science Modu:* Akademik Veri Bilimci.
+- *Developer Modu:* Staff Software Engineer.
+
+#### 3. Curriculum Expansion Engine (Müfredat Genişletme Motoru)
+Statik bir müfredat yoktur. Kullanıcı bir kategoriye baktığında, AI o kategorideki "eksik bırakılmış" ileri seviye konuları analiz eder ve müfredata dinamik olarak ekler.
+
+#### 4. Çoklu Dil Desteği (i18n)
+- **TR/EN** anlık geçiş.
+- Tüm içerik, başlıklar ve AI yanıtları kültürel bağlama uygun olarak lokalize edilir.
+
+## 🛠️ Teknik Mimari (Tech Stack)
+
+*   **Frontend Core:** React 19, TypeScript
+*   **Styling:** TailwindCSS (Grid Patterns, Glassmorphism)
+*   **AI Engine:** Google Gemini API (@google/genai SDK)
+*   **Document Generation:** HTML2PDF (Client-side PDF rendering)
+*   **Icons:** Lucide-style Custom SVG Components
+*   **Security:** Environment variable protection, Client-side rate limiting simulation.
+
+## 📦 Kurulum ve İnceleme
+
+Bu projeyi yerel ortamınızda **SADECE İNCELEME AMAÇLI** çalıştırmak için:
+
+1.  Repoyu klonlayın (Private kullanım için).
+2.  Bağımlılıkları yükleyin: `npm install`
+3.  `.env` dosyanızı oluşturun ve `API_KEY` değişkenini tanımlayın.
+4.  Projeyi başlatın: `npm start`
+
+---
+
+© 2024 All Rights Reserved. See [LICENSE](LICENSE) for details.
