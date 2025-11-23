@@ -4,31 +4,35 @@
 
 ![License: Proprietary](https://img.shields.io/badge/License-PROPRIETARY-red.svg?style=for-the-badge&logo=unlicense)
 ![Copyright: All Rights Reserved](https://img.shields.io/badge/Copyright-All_Rights_Reserved-darkred.svg?style=for-the-badge&logo=expertsexchange)
-![Status: Production Ready](https://img.shields.io/badge/Status-Enterprise_Grade-blue.svg?style=for-the-badge&logo=cloudflare)
+![Usage: Educational Only](https://img.shields.io/badge/Usage-Educational_Review_Only-blue.svg?style=for-the-badge&logo=read-the-docs)
+![AI Training: Prohibited](https://img.shields.io/badge/AI_Training-STRICTLY_PROHIBITED-black.svg?style=for-the-badge&logo=openai)
 
-**Gelişmiş Yapay Zeka Destekli, Polimorfik Eğitim ve Dokümantasyon Sistemi**
+**Cloudflare & Advanced Tech Ecosystem: Zero to Hero**
+*Gelişmiş Yapay Zeka Destekli, Polimorfik Eğitim ve Dokümantasyon Sistemi*
 
 </div>
 
 ---
 
-## ⚠️ LEGAL NOTICE & INTELLECTUAL PROPERTY
+## ⚖️ LEGAL NOTICE & INTELLECTUAL PROPERTY (YASAL UYARI)
 
-**STOP AND READ CAREFULLY.**
+**🇬🇧 ENGLISH (BINDING):**
+This repository contains **PROPRIETARY SOURCE CODE** protected by copyright laws. It is **NOT** Open Source.
+Access is granted strictly for **educational examination** and **portfolio review**.
 
-This software repository contains **PROPRIETARY SOURCE CODE** owned by the author. It is **NOT** Open Source (OSS).
+Under the [LICENSE AGREEMENT](License.md), you are **STRICTLY PROHIBITED** from:
+1.  **Commercial Use:** Selling, sub-licensing, or using this code for business purposes.
+2.  **Redistribution:** Forking publicly or hosting this code on other platforms.
+3.  **AI Training:** Using this codebase to train or fine-tune AI/LLM models.
 
-Access to this code is granted strictly for **educational examination** and **portfolio review** purposes.
+**🇹🇷 TÜRKÇE (ÖZET):**
+Bu yazılımın tüm telif hakları saklıdır. **Açık Kaynak (Open Source) DEĞİLDİR.**
+Kodları sadece inceleme ve eğitim amacıyla görüntüleyebilirsiniz.
 
-### ⛔ STRICTLY PROHIBITED ACTIONS
-Under the terms of the accompanying [LICENSE](LICENSE), you are strictly forbidden from:
-
-1.  **COMMERCIAL USE:** You may NOT use, sell, sub-license, or monetize this code or any derivative works.
-2.  **REDISTRIBUTION:** You may NOT fork this repository publicly, copy files, or host them elsewhere.
-3.  **AI TRAINING:** You may NOT use this codebase to train, fine-tune, or benchmark any Artificial Intelligence models (LLMs).
-4.  **DERIVATIVE WORKS:** You may NOT build new products based on this architecture without written permission.
-
-*Any unauthorized use, reproduction, or distribution will be met with immediate legal action to the fullest extent of applicable copyright laws.*
+[LICENSE AGREEMENT](License.md) dosyası uyarınca şunlar **KESİNLİKLE YASAKTIR**:
+1.  **Ticari Kullanım:** Bu kodu satmak, kiralamak veya ticari bir projede kullanmak.
+2.  **Dağıtım:** Kodu kopyalamak, kendi GitHub hesabınızda yayınlamak.
+3.  **Yapay Zeka Eğitimi:** Bu kodları AI modellerini eğitmek için veri seti olarak kullanmak.
 
 ---
 
@@ -64,8 +68,8 @@ Statik bir müfredat yoktur. Kullanıcı bir kategoriye baktığında, AI o kate
 *   **Styling:** TailwindCSS (Grid Patterns, Glassmorphism)
 *   **AI Engine:** Google Gemini API (@google/genai SDK)
 *   **Document Generation:** HTML2PDF (Client-side PDF rendering)
-*   **Icons:** Lucide-style Custom SVG Components
-*   **Security:** Environment variable protection, Client-side rate limiting simulation.
+*   **Icons:** Custom SVG Components
+*   **Architecture:** Client-side Generative UI
 
 ## 📦 Kurulum ve İnceleme
 
@@ -78,4 +82,4 @@ Bu projeyi yerel ortamınızda **SADECE İNCELEME AMAÇLI** çalıştırmak içi
 
 ---
 
-© 2024 All Rights Reserved. See [LICENSE](LICENSE) for details.
+© 2024. All Rights Reserved. See [License.md](License.md) for full terms.
