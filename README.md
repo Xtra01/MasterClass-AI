@@ -1,7 +1,8 @@
 # Universal AI MasterClass Platform
 
-![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)
-![Status: Production](https://img.shields.io/badge/Status-Production_Ready-blue.svg)
+![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg?style=for-the-badge)
+![Copyright: All Rights Reserved](https://img.shields.io/badge/Copyright-All_Rights_Reserved-darkred.svg?style=for-the-badge)
+![Status: Production Ready](https://img.shields.io/badge/Status-Production_Ready-blue.svg?style=for-the-badge)
 
 **Universal AI MasterClass Platform**, yapay zeka destekli, çok dilli (TR/EN) ve dinamik müfredat yapısına sahip yeni nesil bir e-öğrenme (LMS) sistemidir. Kullanıcılara statik içerik sunmanın ötesinde, eksik konuları analiz eden, derinlemesine araştırma yapabilen ve kendini sürekli güncelleyen bir "AI Eğitmen" mimarisine sahiptir.
 
@@ -42,11 +43,25 @@ Standart eğitimlerin ötesine geçer.
 4.  **Search Engine Architecture:** Inverted Index, Vector Search, Elasticsearch.
 5.  **Recommendation Systems:** Matrix Factorization, Collaborative Filtering.
 
-## 🔒 Lisans ve Telif Hakkı (License)
+---
 
-Bu proje **MÜLKİYETÇİ (PROPRIETARY)** bir yazılımdır.
+## ⚖️ Legal Warning & License (Yasal Uyarı)
 
-Tüm hakları saklıdır. Bu yazılımın kaynak kodları sadece eğitim amaçlı inceleme ve portföy değerlendirmesi için erişime açıktır. İzinsiz kopyalanması, ticari olarak kullanılması, dağıtılması veya üzerinde değişiklik yapılması **kesinlikle yasaktır**.
+**THIS SOFTWARE IS PROPRIETARY AND NOT OPEN SOURCE.**
+
+Copyright © 2024. All Rights Reserved.
+
+Access to the source code provided in this repository is granted for **Educational, Evaluation, and Portfolio Review purposes only**.
+
+### 🚫 Strictly Prohibited Actions:
+1.  **Commercial Use:** You may NOT use this code for any commercial purpose, SaaS, or paid service.
+2.  **Redistribution:** You may NOT copy, fork to public repositories, or distribute this code.
+3.  **Modification:** You may NOT modify or build derivative works based on this software.
+4.  **AI Training:** You may NOT use this code to train Artificial Intelligence models or LLMs.
+
+For detailed terms, please refer to the [LICENSE](LICENSE) file in this repository. 
+
+*Unauthorized use will be subject to legal action under international copyright laws.*
 
 ---
 *Developed with High-End Engineering Principles.*
