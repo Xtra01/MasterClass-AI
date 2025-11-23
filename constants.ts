@@ -1,4 +1,5 @@
 
+
 import { Course, GeneratedContent, Language } from './types';
 
 export const UI_STRINGS: Record<Language, Record<string, string>> = {
@@ -30,7 +31,8 @@ export const UI_STRINGS: Record<Language, Record<string, string>> = {
     tip: "İpucu: Müfredat kategorilerinin yanındaki sihirli değneğe tıklayarak eksik konuları tamamlayabilirsiniz.",
     error: "Hata",
     success: "Başarılı",
-    info: "Bilgi"
+    info: "Bilgi",
+    backToHome: "Ana Sayfaya Dön"
   },
   en: {
     settingsTitle: "Settings & Tools",
@@ -60,22 +62,62 @@ export const UI_STRINGS: Record<Language, Record<string, string>> = {
     tip: "Tip: Click the magic wand icon next to curriculum categories to find and add missing topics.",
     error: "Error",
     success: "Success",
-    info: "Info"
+    info: "Info",
+    backToHome: "Back to Home"
   }
 };
 
-// Simple dictionary to translate IDs to English titles (Simulated for brevity)
-// In a real app, you might have separate full objects or a translation backend.
+export const LANDING_STRINGS: Record<Language, any> = {
+    tr: {
+        heroBadge: "Yeni Nesil Yapay Zeka Öğrenme Platformu",
+        heroTitle: "Teknolojiyi Sınırların Ötesinde Öğrenin",
+        heroSub: "Statik kurslardan sıkıldınız mı? Sizinle birlikte gelişen, eksik parçaları tamamlayan ve derinlemesine inen canlı bir ekosistem.",
+        startBtn: "Keşfetmeye Başla",
+        features: [
+            { title: "Dinamik Müfredat", desc: "Siz ilerledikçe eksik konuları analiz edip ekleyen AI motoru." },
+            { title: "Derinlemesine Analiz", desc: "Yüzeysel tanımlar yerine üretim ortamı (production) senaryoları." },
+            { title: "Uzman Eğitmen Modu", desc: "Her konu için özelleşmiş 'Senior Engineer' yapay zeka kişiliği." }
+        ],
+        availableCourses: "Mevcut Uzmanlık Programları",
+        startLearning: "Eğitime Başla",
+        courseCount: "Konu Başlığı"
+    },
+    en: {
+        heroBadge: "Next Generation AI Learning Platform",
+        heroTitle: "Master Technology Beyond Limits",
+        heroSub: "Bored of static courses? Meet a living ecosystem that evolves with you, fills in the gaps, and dives deep.",
+        startBtn: "Start Exploring",
+        features: [
+            { title: "Dynamic Curriculum", desc: "AI engine that analyzes and adds missing topics as you progress." },
+            { title: "Deep Dive Analysis", desc: "Production scenarios instead of superficial definitions." },
+            { title: "Expert Instructor Mode", desc: "Specialized 'Senior Engineer' AI persona for each topic." }
+        ],
+        availableCourses: "Available MasterClasses",
+        startLearning: "Start Learning",
+        courseCount: "Topics"
+    }
+};
+
+// Translations for Course Titles and Descriptions
 export const COURSE_TRANSLATIONS: Record<string, { tr: { title: string, desc: string }, en: { title: string, desc: string } }> = {
-    // Cloudflare
     'cloudflare': { tr: { title: 'Cloudflare', desc: 'Edge network, WAF, Workers ve Serverless.' }, en: { title: 'Cloudflare', desc: 'Edge network, WAF, Workers and Serverless.' } },
-    'fundamentals': { tr: { title: 'Core & Networking', desc: '' }, en: { title: 'Core & Networking', desc: '' } },
-    'dns-setup': { tr: { title: 'DNS Mimarisi ve Yönetimi', desc: 'NS kayıtları, DNSSEC.' }, en: { title: 'DNS Architecture', desc: 'NS records, DNSSEC, CNAME Flattening.' } },
-    'cdn-cache': { tr: { title: 'CDN ve Advanced Caching', desc: 'Cache kuralları.' }, en: { title: 'CDN & Advanced Caching', desc: 'Cache rules, Tiered Cache.' } },
-    'ssl-tls': { tr: { title: 'SSL/TLS ve Edge Certificates', desc: 'SSL modları.' }, en: { title: 'SSL/TLS & Certificates', desc: 'SSL modes, Edge Certificates.' } },
-    'load-balancing': { tr: { title: 'Load Balancing', desc: 'Global trafik.' }, en: { title: 'Load Balancing', desc: 'Global traffic distribution.' } },
-    
-    // Default fallback logic handles the rest or uses the ID as title if missing
+    'ai-strategy': { tr: { title: 'AI & Kurumsal Strateji', desc: 'B2B değer üretimi, ROI ve Stratejik Dönüşüm.' }, en: { title: 'AI & Enterprise Strategy', desc: 'B2B value creation, ROI and Strategic Transformation.' } },
+    'ai-engineering': { tr: { title: 'AI Mühendisliği', desc: 'Uygulamalı projeler ve sektörel çözümler.' }, en: { title: 'AI Engineering', desc: 'Applied projects and industrial solutions.' } },
+    'gen-ai-llm': { tr: { title: 'Generative AI & LLMs', desc: 'Büyük Dil Modelleri, Prompt Engineering ve RAG.' }, en: { title: 'Generative AI & LLMs', desc: 'Large Language Models, Prompt Engineering and RAG.' } },
+    'ai-ethics': { tr: { title: 'Etik & Regülasyonlar', desc: 'Güvenlik, uyumluluk, EU AI Act ve Şeffaflık.' }, en: { title: 'Ethics & Regulations', desc: 'Security, compliance, EU AI Act and Transparency.' } },
+    'ml-ops': { tr: { title: 'Uygulamalı DS & MLOps', desc: 'ML Pipeline, Model Dağıtımı ve Ölçekleme.' }, en: { title: 'Applied DS & MLOps', desc: 'ML Pipelines, Model Deployment and Scaling.' } },
+    'ai-scraping': { tr: { title: 'Full-Stack AI Web Scraping', desc: 'Anti-bot sistemleri, headless mimari ve büyük ölçekli veri toplama.' }, en: { title: 'Full-Stack AI Web Scraping', desc: 'Anti-bot systems, headless architecture and large scale data collection.' } },
+    'llm-automation': { tr: { title: 'LLM Otomasyon Mühendisliği', desc: 'Akıllı boru hatları, veri temizleme ve karar mekanizmaları.' }, en: { title: 'LLM Automation Engineering', desc: 'Intelligent pipelines, data cleaning and decision mechanisms.' } },
+    'gcp-cost': { tr: { title: 'Google Cloud Maliyet Mimarisi', desc: 'Free Tier optimizasyonu ve düşük maliyetli ölçekleme.' }, en: { title: 'GCP Cost-Aware Architecture', desc: 'Free Tier optimization and low-cost scaling.' } },
+    'high-perf-python': { tr: { title: 'High-Performance Python', desc: 'GPU hızlandırma, async IO ve bellek optimizasyonu.' }, en: { title: 'High-Performance Python', desc: 'GPU acceleration, async IO and memory optimization.' } },
+    'data-engineering': { tr: { title: 'AI İçin Veri Mühendisliği', desc: 'ETL/ELT, dbt, Airflow ve modern veri yığınları.' }, en: { title: 'Data Engineering for AI', desc: 'ETL/ELT, dbt, Airflow and modern data stacks.' } },
+    'global-payments': { tr: { title: 'Global Ödeme Altyapıları', desc: 'Sınır ötesi ödemeler, KYC/AML ve Fintech uyumluluğu.' }, en: { title: 'Global Payments Infrastructure', desc: 'Cross-border payments, KYC/AML and Fintech compliance.' } },
+    'b2b-ai-sales': { tr: { title: 'AI Destekli B2B Satış', desc: 'Değer önerisi, ROI hesaplama ve kurumsal güven inşası.' }, en: { title: 'AI-Driven B2B Sales', desc: 'Value proposition, ROI calculation and enterprise trust building.' } },
+    'api-productization': { tr: { title: 'API Ürünleştirme & Gelir', desc: 'Veri servislerini paraya çevirme, rate limiting ve DX.' }, en: { title: 'API Productization & Monetization', desc: 'Monetizing data services, rate limiting and DX.' } },
+    'behavioral-ai': { tr: { title: 'Davranışsal AI & Karar Mimarisi', desc: 'Psikoloji, dürtme (nudge) teorisi ve karar sistemleri.' }, en: { title: 'Behavioral AI & Decision Arch', desc: 'Psychology, nudge theory and decision systems.' } },
+    'info-theory': { tr: { title: 'Pratik Bilgi Kuramı (Information Theory)', desc: 'Shannon entropisi, Fourier analizi ve anomali tespiti.' }, en: { title: 'Practical Information Theory', desc: 'Shannon entropy, Fourier analysis and anomaly detection.' } },
+    'personal-agents': { tr: { title: 'Kişisel AI Ajanları', desc: 'Otonom iş akışları, multi-agent sistemler ve araç kullanımı.' }, en: { title: 'Personal AI Agents', desc: 'Autonomous workflows, multi-agent systems and tool use.' } },
+    'consultant-branding': { tr: { title: 'AI Danışman Markalaması', desc: 'Otorite inşası, içerik stratejisi ve pazar konumlandırma.' }, en: { title: 'AI Consultant Branding', desc: 'Authority building, content strategy and market positioning.' } }
 };
 
 
@@ -139,14 +181,6 @@ export const COURSES: Course[] = [
             ]
           },
           {
-            id: 'media',
-            title: 'Media Services',
-            topics: [
-              { id: 'stream', title: 'Cloudflare Stream', description: 'Serverless video hosting ve adaptif bitrate streaming.', level: 'Advanced' },
-              { id: 'images', title: 'Cloudflare Images', description: 'Görsel optimizasyonu, boyutlandırma ve depolama.', level: 'Intermediate' },
-            ]
-          },
-          {
             id: 'zero-trust',
             title: 'Zero Trust & SASE',
             topics: [
@@ -155,16 +189,455 @@ export const COURSES: Course[] = [
               { id: 'cloudflared', title: 'Cloudflare Tunnel (cloudflared)', description: 'Public IP olmadan özel ağları dışarı açma.', level: 'Advanced' },
               { id: 'warp', title: 'WARP Client & Device Posture', description: 'Cihaz güvenliği kontrolü ve VPN entegrasyonu.', level: 'Expert' },
             ]
-          },
-          {
-            id: 'automation',
-            title: 'Automation & IaC',
-            topics: [
-              { id: 'terraform', title: 'Terraform ile Cloudflare', description: 'Altyapıyı kod olarak yönetme (IaC).', level: 'Expert' },
-              { id: 'api-management', title: 'Cloudflare API', description: 'API token yönetimi ve otomasyon scriptleri.', level: 'Advanced' },
-            ]
           }
     ]
+  },
+  {
+      id: 'ai-scraping',
+      title: 'Full-Stack AI Web Scraping',
+      description: 'Konseptten prodüksiyona kadar büyük ölçekli veri toplama mimarisi.',
+      icon: 'ScraperIcon',
+      themeColor: '#E65100', // Deep Orange
+      curriculum: [
+          {
+              id: 'scraping-arch',
+              title: 'Modern Scraping Mimarisi',
+              topics: [
+                  { id: 'api-vs-browser', title: 'API-first vs Browser-first', description: 'Ne zaman tersine mühendislik, ne zaman headless browser kullanılmalı?', level: 'Advanced' },
+                  { id: 'anti-bot-systems', title: 'Anti-Bot & Fingerprinting', description: 'TLS parmak izi, Canvas fingerprinting ve bypass teknikleri.', level: 'Expert' },
+                  { id: 'multi-region-infra', title: 'Multi-Region & Proxy', description: 'Global IP rotasyonu ve veri merkezi/konut proxy yönetimi.', level: 'Advanced' }
+              ]
+          },
+          {
+              id: 'scraping-data',
+              title: 'Veri Çıkarma & Pipeline',
+              topics: [
+                  { id: 'schema-extraction', title: 'Structured Data Extraction', description: 'HTML -> JSON-LD, schema.org ve rel=me analizi.', level: 'Intermediate' },
+                  { id: 'google-maps-scraping', title: 'Google Maps & Places Strategy', description: 'Konum tabanlı veri toplama ve doğruluk optimizasyonu.', level: 'Expert' },
+                  { id: 'request-pipeline', title: 'High-Scale Pipeline (500k+)', description: 'Kuyruk mimarisi, throttling, retry ve backoff stratejileri.', level: 'Expert' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'llm-automation',
+      title: 'LLM Otomasyon Mühendisliği',
+      description: 'LLM\'leri veri akışlarında hızlandırıcı ve karar verici olarak kullanmak.',
+      icon: 'BotIcon',
+      themeColor: '#00ACC1', // Cyan
+      curriculum: [
+          {
+              id: 'llm-data-flow',
+              title: 'Intelligent Data Flow',
+              topics: [
+                  { id: 'prompt-task-eng', title: 'Task-Based Prompt Engineering', description: 'Görevi yapılandırma, doğrulama ve çıktı formatlama.', level: 'Advanced' },
+                  { id: 'llm-cleaning', title: 'Aggressive Data Cleaning', description: 'Şirket isimleri, adresler ve karmaşık metinlerin normalizasyonu.', level: 'Intermediate' },
+                  { id: 'domain-inference', title: 'Domain & Brand Inference', description: 'Eksik veriden (sosyal hesap, web sitesi) marka tespiti.', level: 'Advanced' }
+              ]
+          },
+          {
+              id: 'llm-quality',
+              title: 'Quality & Evaluation',
+              topics: [
+                  { id: 'hallucination-guard', title: 'Quality Gates & Guardrails', description: 'Halüsinasyon engelleme ve yapısal çıktı (JSON/XML) zorlama.', level: 'Expert' },
+                  { id: 'eval-frameworks', title: 'Automated Evaluation', description: 'BLEU, BERTScore ve Self-Check mekanizmaları.', level: 'Expert' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'gcp-cost',
+      title: 'Google Cloud Cost-Aware Arch',
+      description: 'Tamamen Free Tier + low-cost optimizasyon odaklı GCP senaryoları.',
+      icon: 'CloudCostIcon',
+      themeColor: '#43A047', // Green
+      curriculum: [
+          {
+              id: 'gcp-core-opt',
+              title: 'Core Services Optimization',
+              topics: [
+                  { id: 'iam-security', title: 'IAM & Service Accounts', description: 'Minimal yetkilendirme ve güvenli erişim yönetimi.', level: 'Intermediate' },
+                  { id: 'serverless-chain', title: 'Functions-Workflows-Firestore', description: 'Olay tabanlı, düşük maliyetli zincirleme mimariler.', level: 'Advanced' },
+                  { id: 'cold-start', title: 'Cold-Start Optimization', description: 'Fonksiyonların ısınma stratejileri ve gecikme yönetimi.', level: 'Advanced' }
+              ]
+          },
+          {
+              id: 'gcp-cost-control',
+              title: 'Billing & Data',
+              topics: [
+                  { id: 'billing-alert', title: 'Early-Warning Systems', description: 'Bütçe aşımlarını anlık tespit eden alarmlar.', level: 'Beginner' },
+                  { id: 'maps-cost', title: 'Maps API Cost Modeling', description: 'Harita ve yer API\'lerinin maliyetini düşürme stratejileri.', level: 'Expert' },
+                  { id: 'cache-first', title: 'Cache-First API Design', description: 'Redis/Memorystore kullanarak API çağrı maliyetlerini düşürme.', level: 'Expert' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'high-perf-python',
+      title: 'High-Performance Python',
+      description: 'CPU/RAM bottleneck kıran, büyük veri için optimize edilmiş mimari.',
+      icon: 'SpeedIcon',
+      themeColor: '#FFD600', // Yellow
+      curriculum: [
+          {
+              id: 'python-concurrency',
+              title: 'Concurrency & Parallelism',
+              topics: [
+                  { id: 'async-decision', title: 'AsyncIO vs Multi-processing', description: 'IO-bound vs CPU-bound işlemler için karar matrisi.', level: 'Advanced' },
+                  { id: 'gpu-acceleration', title: 'GPU Acceleration (RAPIDS/CuPy)', description: 'Metin ve veri işlemeyi GPU üzerinde hızlandırma.', level: 'Expert' }
+              ]
+          },
+          {
+              id: 'python-data-opt',
+              title: 'Data Optimization',
+              topics: [
+                  { id: 'polars-numpy', title: 'Polars & NumExpr', description: 'Pandas alternatifleri ile 10x+ hız artışı.', level: 'Advanced' },
+                  { id: 'memory-mapping', title: 'Zero-Copy & Memory Mapping', description: 'RAM sınırlarını aşan büyük verilerle çalışma.', level: 'Expert' },
+                  { id: 'profiling', title: 'Performance Profiling', description: 'cProfile ve line_profiler ile darboğaz analizi.', level: 'Intermediate' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'data-engineering',
+      title: 'Data Engineering for AI',
+      description: 'AI destekli veri ürünleri için modern veri mühendisliği altyapısı.',
+      icon: 'DataScienceIcon', // Reusing appropriate icon
+      themeColor: '#7B1FA2', // Purple
+      curriculum: [
+          {
+              id: 'data-pipeline',
+              title: 'Modern Pipelines',
+              topics: [
+                  { id: 'etl-elt', title: 'ETL vs ELT Architectures', description: 'Modern veri ambarı yükleme stratejileri.', level: 'Intermediate' },
+                  { id: 'orchestration', title: 'Task Orchestration', description: 'Airflow veya Dagster ile karmaşık iş akışları.', level: 'Advanced' },
+                  { id: 'dbt-models', title: 'dbt (Data Build Tool)', description: 'Veri transformasyonlarını ve modellerini standartlaştırma.', level: 'Advanced' }
+              ]
+          },
+          {
+              id: 'data-gov',
+              title: 'Quality & Governance',
+              topics: [
+                  { id: 'hybrid-analytics', title: 'DuckDB + BigQuery', description: 'Lokal ve bulut analitik motorlarının hibrit kullanımı.', level: 'Expert' },
+                  { id: 'data-validation', title: 'Data Quality (Great Expectations)', description: 'Otomatik veri doğrulama ve kalite kontrol.', level: 'Advanced' },
+                  { id: 'lineage', title: 'Data Lineage & Governance', description: 'Verinin yolculuğunu takip etme ve uyumluluk.', level: 'Expert' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'global-payments',
+      title: 'Global Payments & Compliance',
+      description: 'Freelance, çoklu vatandaşlık ve uluslararası ödeme tasarımları.',
+      icon: 'GlobalPaymentIcon',
+      themeColor: '#2E7D32', // Dark Green
+      curriculum: [
+          {
+              id: 'payment-infra',
+              title: 'Ödeme Altyapıları',
+              topics: [
+                  { id: 'provider-comparison', title: 'Stripe vs Wise vs Revolut', description: 'Teknik yetenekler, komisyonlar ve yasal farklar.', level: 'Intermediate' },
+                  { id: 'payment-flow', title: 'Money Flow Architecture', description: 'Onramp -> Settlement -> Payout döngüsü.', level: 'Advanced' },
+                  { id: 'api-payments', title: 'API-Based Payment Flows', description: 'Ödeme akışlarının kod ile yönetimi.', level: 'Advanced' }
+              ]
+          },
+          {
+              id: 'compliance',
+              title: 'Risk & Compliance',
+              topics: [
+                  { id: 'kyc-aml', title: 'KYC/AML & MASAK/EU', description: 'Kara para aklama önleme ve kimlik doğrulama standartları.', level: 'Expert' },
+                  { id: 'kyb-risk', title: 'KYB (Know Your Business)', description: 'İşletme doğrulama ve risk skorlama mantığı.', level: 'Expert' },
+                  { id: 'fraud-detection', title: 'Fraud Detection Basics', description: 'Şüpheli işlemleri tespit etme temelleri.', level: 'Advanced' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'b2b-ai-sales',
+      title: 'AI-Driven B2B Sales',
+      description: 'Kurumsal müşteri tarafında güven, ROI ve teknik yeterlilik oluşturma.',
+      icon: 'B2BSalesIcon',
+      themeColor: '#FBC02D', // Gold
+      curriculum: [
+          {
+              id: 'value-prop',
+              title: 'Value Proposition',
+              topics: [
+                  { id: 'b2b-needs', title: 'B2B İhtiyaç Haritalama', description: 'Kurumsal acı noktalarını (pain points) teknik çözüme çevirme.', level: 'Intermediate' },
+                  { id: 'ai-canvas', title: 'AI Değer Önerisi Kanvası', description: 'Yapay zeka projeleri için özel iş modeli tasarımı.', level: 'Advanced' },
+                  { id: 'roi-calc', title: 'ROI Hesaplama', description: 'Tasarruf, hız ve doğruluk metriklerinin finansallaştırılması.', level: 'Expert' }
+              ]
+          },
+          {
+              id: 'enterprise-trust',
+              title: 'Trust & Documentation',
+              topics: [
+                  { id: 'exec-pres', title: 'Executive-Level Sunum', description: 'Teknik detaya boğulmadan C-Level ikna dili.', level: 'Advanced' },
+                  { id: 'case-studies', title: 'Technical Case Studies', description: 'Başarı hikayelerinin teknik dokümantasyonu.', level: 'Intermediate' },
+                  { id: 'risk-mgmt-sales', title: 'Risk Yönetimi & Şeffaflık', description: 'Kurumsal güven inşası için risklerin açıkça yönetimi.', level: 'Expert' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'api-productization',
+      title: 'API Productization',
+      description: 'Veriyi veya otomasyon akışlarını satılabilir API ürününe dönüştürme.',
+      icon: 'ApiProductIcon',
+      themeColor: '#3949AB', // Indigo
+      curriculum: [
+          {
+              id: 'api-business',
+              title: 'Monetization Models',
+              topics: [
+                  { id: 'usage-pricing', title: 'Usage-Based Pricing', description: 'Kullanıma dayalı fiyatlandırma modelleri.', level: 'Advanced' },
+                  { id: 'metering-billing', title: 'Metering & Billing Hooks', description: 'API kullanımını ölçme ve faturalandırma entegrasyonu.', level: 'Expert' },
+                  { id: 'tiering-limits', title: 'Rate Limits & Quotas', description: 'Farklı paketler için limit yönetimi stratejileri.', level: 'Intermediate' }
+              ]
+          },
+          {
+              id: 'api-tech',
+              title: 'Technical Implementation',
+              topics: [
+                  { id: 'api-auth', title: 'Authentication (OAuth2/JWT)', description: 'Güvenli API erişimi ve anahtar yönetimi.', level: 'Advanced' },
+                  { id: 'dx-design', title: 'Developer Experience (DX)', description: 'SDK, dokümantasyon ve sandbox tasarımı.', level: 'Advanced' },
+                  { id: 'sla-incident', title: 'SLA & Incident Management', description: 'Hizmet seviyesi taahhütleri ve kesinti yönetimi.', level: 'Expert' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'behavioral-ai',
+      title: 'Behavioural AI',
+      description: 'Psikoloji + veri + AI içgörüsüyle karar sistemleri tasarlamak.',
+      icon: 'BrainIcon',
+      themeColor: '#D81B60', // Pink
+      curriculum: [
+          {
+              id: 'behavioral-science',
+              title: 'Decision Science',
+              topics: [
+                  { id: 'cognitive-bias', title: 'Bilişsel Önyargılar', description: 'Karar akışlarına önyargı yönetimi entegrasyonu.', level: 'Intermediate' },
+                  { id: 'nudging', title: 'Nudging Mekanizmaları', description: 'Varsayılanlar, sınırlı seçenekler ve yönlendirme.', level: 'Advanced' },
+                  { id: 'friction-modeling', title: 'Behavioural Scoring', description: 'Kullanıcı sürtünme noktalarının modellenmesi.', level: 'Advanced' }
+              ]
+          },
+          {
+              id: 'decision-arch',
+              title: 'Architecture',
+              topics: [
+                  { id: 'bottleneck-opp', title: 'Decision Bottlenecks', description: 'Karar darboğazlarını otomasyon fırsatına çevirme.', level: 'Expert' },
+                  { id: 'hybrid-decision', title: 'Human + AI Models', description: 'İnsan ve yapay zeka ortak karar mekanizmaları.', level: 'Expert' },
+                  { id: 'ent-design', title: 'Enterprise Behaviour Design', description: 'Kurumsal davranış tasarımı.', level: 'Expert' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'info-theory',
+      title: 'Information Theory & AI',
+      description: 'Shannon + normal dağılım + Fourier’in gerçek data projelerine uygulanması.',
+      icon: 'MathIcon',
+      themeColor: '#00897B', // Teal
+      curriculum: [
+          {
+              id: 'theory-foundations',
+              title: 'Theoretical Foundations',
+              topics: [
+                  { id: 'shannon-entropy', title: 'Entropy & Mutual Information', description: 'Web arama sonuçlarının güvenilirlik ve bilgi değeri ölçümü.', level: 'Advanced' },
+                  { id: 'normal-dist', title: 'Normal Distribution Applications', description: 'İstatistiksel anomali tespiti.', level: 'Intermediate' },
+                  { id: 'logistic-map', title: 'Logistic Map & Chaos', description: 'Kaotik veri davranışlarının analizi.', level: 'Expert' }
+              ]
+          },
+          {
+              id: 'applied-math',
+              title: 'Applied Computation',
+              topics: [
+                  { id: 'fourier-transform', title: 'Fourier Transform', description: 'Gürültü/sinyal ayrımı ve scraping hatalarını temizleme.', level: 'Expert' },
+                  { id: 'comm-efficiency', title: 'Communication Efficiency', description: 'Shannon limiti ve API throughput optimizasyonu.', level: 'Expert' },
+                  { id: 'model-uncertainty', title: 'Model Uncertainty', description: 'AI modellerinin belirsizlik ölçümü.', level: 'Advanced' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'personal-agents',
+      title: 'Personal AI Agents',
+      description: 'Senin tarzına uygun kişisel ajanlar ile otomasyon orkestrasyonu.',
+      icon: 'AgentIcon',
+      themeColor: '#5E35B1', // Deep Purple
+      curriculum: [
+          {
+              id: 'agent-patterns',
+              title: 'Agent Architectures',
+              topics: [
+                  { id: 'multi-agent', title: 'Multi-Agent Patterns', description: 'Planner -> Worker -> Reviewer mimarisi.', level: 'Advanced' },
+                  { id: 'self-healing', title: 'Self-Healing Pipelines', description: 'Hata durumunda kendini düzelten ajanlar.', level: 'Expert' },
+                  { id: 'hybrid-agents', title: 'Decision Agents', description: 'Kural tabanlı ve LLM hibrit mimariler.', level: 'Advanced' }
+              ]
+          },
+          {
+              id: 'agent-impl',
+              title: 'Implementation',
+              topics: [
+                  { id: 'data-cleaner-agent', title: 'Data Cleaner Agent', description: 'Yapısal veri çıkarma ve doğrulama ajanı.', level: 'Intermediate' },
+                  { id: 'pipeline-agent', title: 'Web -> DB Pipeline Agent', description: 'Uçtan uca veri taşıma ajanı.', level: 'Advanced' },
+                  { id: 'tool-use', title: 'Tool-Use Frameworks', description: 'Arama, tarama, çalıştırma ve doğrulama araçları.', level: 'Expert' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'consultant-branding',
+      title: 'AI Consultant Branding',
+      description: 'Yüksek değerli danışman profili oluşturma ve pazar konumlaması.',
+      icon: 'BrandIcon',
+      themeColor: '#C2185B', // Magenta
+      curriculum: [
+          {
+              id: 'positioning',
+              title: 'Strategic Positioning',
+              topics: [
+                  { id: 'value-prop-brand', title: 'Tek Cümle Değer Önerisi', description: 'Karmaşık yetenekleri net bir faydaya indirgeme.', level: 'Intermediate' },
+                  { id: 'market-position', title: 'Güvenli & Teknik Konumlanma', description: '"Expert" algısı oluşturma stratejileri.', level: 'Advanced' },
+                  { id: 'portfolio-arch', title: 'Portfolio Architecture', description: 'Güvenilirlik kanıtı (credibility assets) oluşturma.', level: 'Advanced' }
+              ]
+          },
+          {
+              id: 'content-sys',
+              title: 'Content System',
+              topics: [
+                  { id: 'linkedin-sys', title: 'LinkedIn Content System', description: 'Sürdürülebilir, AI destekli içerik üretimi.', level: 'Intermediate' },
+                  { id: 'medium-auth', title: 'Medium Authority', description: 'Uzun format yazılarla uzmanlık alanı inşası.', level: 'Advanced' },
+                  { id: 'visual-identity', title: 'Brand Language & Identity', description: 'Marka dili, tonu ve görsel kimliği.', level: 'Intermediate' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'ai-strategy',
+      title: 'AI & Kurumsal Strateji',
+      description: 'B2B müşteriler için değer üretimi, ROI analizi ve stratejik dönüşüm.',
+      icon: 'StrategyIcon',
+      themeColor: '#8E44AD',
+      curriculum: [
+          {
+              id: 'strat-business',
+              title: 'İş Değeri & ROI',
+              topics: [
+                  { id: 'ai-value-creation', title: 'Yapay Zeka ile Değer Yaratımı', description: 'Teknolojiden iş sonuçlarına geçiş stratejileri.', level: 'Advanced' },
+                  { id: 'ai-cost-benefit', title: 'Maliyet/Fayda Analizi (ROI)', description: 'AI yatırımlarının geri dönüşünü hesaplama ve ölçme.', level: 'Expert' }
+              ]
+          },
+          {
+              id: 'strat-decision',
+              title: 'Karar Alma & Liderlik',
+              topics: [
+                  { id: 'data-driven-decision', title: 'Veri Odaklı Karar Alma', description: 'Sezgisel yönetimden analitik yönetime geçiş.', level: 'Intermediate' },
+                  { id: 'ai-adoption', title: 'Kurumsal AI Adaptasyonu', description: 'Kültürel direnç ve değişim yönetimi.', level: 'Expert' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'ai-engineering',
+      title: 'Yapay Zekâ Mühendisliği',
+      description: 'Lojistikten finansa, farklı sektörler için uygulamalı mühendislik çözümleri.',
+      icon: 'EngineeringIcon',
+      themeColor: '#1ABC9C',
+      curriculum: [
+          {
+              id: 'eng-architecture',
+              title: 'AI Sistem Mimarisi',
+              topics: [
+                  { id: 'scalable-ai', title: 'Ölçeklenebilir AI Mimarileri', description: 'Milyonlarca isteği karşılayabilen sistem tasarımı.', level: 'Advanced' },
+                  { id: 'clean-code-ai', title: 'AI için Temiz Kod & Refactoring', description: 'Sürdürülebilir model geliştirme pratikleri.', level: 'Intermediate' }
+              ]
+          },
+          {
+              id: 'eng-industry',
+              title: 'Sektörel Uygulamalar',
+              topics: [
+                  { id: 'predictive-maintenance', title: 'Kestirimci Bakım (Lojistik/Üretim)', description: 'IoT verileriyle arıza tahmini modelleri.', level: 'Expert' },
+                  { id: 'fintech-fraud', title: 'FinTech & Fraud Detection', description: 'Gerçek zamanlı dolandırıcılık tespit sistemleri.', level: 'Expert' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'gen-ai-llm',
+      title: 'Generative AI & LLMs',
+      description: 'Büyük Dil Modelleri, Prompt Engineering ve Modern RAG Mimarileri.',
+      icon: 'GenAIIcon',
+      themeColor: '#FF0080',
+      curriculum: [
+          {
+              id: 'llm-foundations',
+              title: 'LLM Temelleri',
+              topics: [
+                  { id: 'transformer-arch', title: 'Transformer Mimarisi', description: 'Attention mekanizması ve model iç yapıları.', level: 'Advanced' },
+                  { id: 'prompt-engineering', title: 'Advanced Prompt Engineering', description: 'Chain-of-Thought, ReAct ve Few-Shot teknikleri.', level: 'Intermediate' }
+              ]
+          },
+          {
+              id: 'llm-advanced',
+              title: 'İleri Seviye Uygulamalar',
+              topics: [
+                  { id: 'rag-architecture', title: 'RAG (Retrieval Augmented Generation)', description: 'Vektör veritabanları ile kurumsal bilgi entegrasyonu.', level: 'Expert' },
+                  { id: 'llm-agents', title: 'Autonomous Agents & Tools', description: 'LangChain ve AutoGPT ile otonom ajanlar.', level: 'Expert' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'ai-ethics',
+      title: 'Etik & Güvenlik',
+      description: 'Güvenilir AI, Regülasyon Uyumluluğu (Compliance) ve Güvenlik.',
+      icon: 'EthicsIcon',
+      themeColor: '#E74C3C',
+      curriculum: [
+          {
+              id: 'ethics-trust',
+              title: 'Güven & Şeffaflık',
+              topics: [
+                  { id: 'explainable-ai', title: 'XAI (Açıklanabilir Yapay Zeka)', description: 'Model kararlarının şeffaflığı ve SHAP analizi.', level: 'Advanced' },
+                  { id: 'bias-fairness', title: 'Algoritmik Önyargı ve Adalet', description: 'Veri setlerindeki bias tespiti ve giderme.', level: 'Intermediate' }
+              ]
+          },
+          {
+              id: 'ethics-security',
+              title: 'Güvenlik & Regülasyon',
+              topics: [
+                  { id: 'ai-security', title: 'Adversarial Attacks & Security', description: 'Prompt Injection ve Data Poisoning saldırıları.', level: 'Expert' },
+                  { id: 'ai-compliance', title: 'EU AI Act & GDPR Compliance', description: 'Yasal düzenlemelere uyumlu AI geliştirme.', level: 'Advanced' }
+              ]
+          }
+      ]
+  },
+  {
+      id: 'ml-ops',
+      title: 'Uygulamalı DS & MLOps',
+      description: 'Model dağıtımı, ML Pipeline yönetimi ve üretim ortamı (Production).',
+      icon: 'PipelineIcon',
+      themeColor: '#3498DB',
+      curriculum: [
+          {
+              id: 'mlops-foundation',
+              title: 'MLOps Temelleri',
+              topics: [
+                  { id: 'model-tracking', title: 'Experiment Tracking (MLflow)', description: 'Model versiyonlama ve deney takibi.', level: 'Intermediate' },
+                  { id: 'cicd-ml', title: 'CI/CD for Machine Learning', description: 'Otomatik test ve dağıtım boru hatları.', level: 'Advanced' }
+              ]
+          },
+          {
+              id: 'mlops-prod',
+              title: 'Production & Serving',
+              topics: [
+                  { id: 'model-serving', title: 'Model Serving Architectures', description: 'TensorFlow Serving, TorchServe ve ONNX.', level: 'Expert' },
+                  { id: 'data-validation', title: 'Data Validation & Drift Detection', description: 'Veri kalitesi ve model başarım takibi.', level: 'Expert' }
+              ]
+          }
+      ]
   },
   {
       id: 'typescript',
@@ -443,7 +916,7 @@ Eğer dinamik bir API'niz varsa ama yanıtlar sık değişmiyorsa:
       relatedTopics: ["DNS Filtering", "Secure Web Gateway", "DLP"]
   },
   'cloudflared': {
-      title: "Cloudflared Tunnel",
+      title: "Cloudflare Tunnel",
       content: `# Cloudflare Tunnel\n\nPort açmadan iç ağdaki sunucuları dışarı açar. Güvenlik duvarında Inbound kuralı gerekmez.`,
       relatedTopics: ["Tunneling", "No Port Forwarding", "Private Network"]
   },

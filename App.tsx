@@ -5,9 +5,10 @@ import { Topic, ChatMessage, ContentCache, Course, Language } from './types';
 import { generateTutorialContent, chatWithContext, suggestMissingTopics } from './services/geminiService';
 import MarkdownRenderer from './components/MarkdownRenderer';
 import ChatBubble from './components/ChatBubble';
+import LandingPage from './components/LandingPage';
 import { 
   Logo, ChevronRight, BookOpen, Terminal, Shield, Zap, Database, Lock, Sparkles, 
-  Settings, RefreshCw, XCircle, Trash, ChevronDown, Microscope, Wand, Globe,
+  Settings, RefreshCw, XCircle, Trash, ChevronDown, Microscope, Wand, Globe, Home,
   CloudflareIcon, TypeScriptIcon, DataScienceIcon, SearchIcon, RecommendationIcon
 } from './components/Icons';
 
@@ -31,7 +32,10 @@ interface QueueItem extends Topic {
   language: Language;
 }
 
+type AppView = 'landing' | 'course';
+
 const App: React.FC = () => {
+  const [view, setView] = useState<AppView>('landing');
   const [language, setLanguage] = useState<Language>('tr');
   const t = (key: string) => UI_STRINGS[language][key] || key;
 
@@ -273,6 +277,11 @@ const App: React.FC = () => {
       addToast("clear-queue", t('queue'), "Cleared", "info");
   };
 
+  const handleSelectCourse = (courseId: string) => {
+    setActiveCourseId(courseId);
+    setView('course');
+  };
+
   const isTopicProcessing = (id: string) => activeRequests.includes(id);
   const isTopicQueued = (id: string) => processingQueue.some(t => t.id === id);
 
@@ -332,10 +341,8 @@ const App: React.FC = () => {
   };
 
   const getTranslatedTitle = (originalTitle: string, id: string) => {
-      if (language === 'tr') return originalTitle; // Default constants are TR
-      // Try to find translation for ID
+      if (language === 'tr') return originalTitle; 
       if (COURSE_TRANSLATIONS[id]?.en?.title) return COURSE_TRANSLATIONS[id].en.title;
-      // Fallback
       return originalTitle;
   };
   
@@ -370,6 +377,16 @@ const App: React.FC = () => {
   }, [searchQuery, activeCourse, language]);
 
   const activeContent = activeTopic ? contentCache[activeTopic.id] : null;
+
+  if (view === 'landing') {
+      return (
+          <LandingPage 
+            onSelectCourse={handleSelectCourse} 
+            language={language}
+            setLanguage={setLanguage}
+          />
+      );
+  }
 
   return (
     <div className="flex h-screen bg-[#0d0d0d] text-gray-100 overflow-hidden font-sans relative">
@@ -450,10 +467,16 @@ const App: React.FC = () => {
              {/* Header Top Row with Language Switcher */}
              <div className="flex items-center justify-between px-2 pt-2">
                  <button 
+                    onClick={() => setView('landing')}
+                    className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold text-gray-500 hover:text-white transition-colors"
+                 >
+                    <Home className="w-3 h-3" /> {t('backToHome')}
+                 </button>
+                 <button 
                     onClick={() => setLanguage(language === 'tr' ? 'en' : 'tr')}
                     className="flex items-center gap-1.5 px-2 py-1 text-[10px] font-bold text-gray-500 hover:text-white transition-colors"
                  >
-                    <Globe /> {language.toUpperCase()}
+                    <Globe className="w-3 h-3" /> {language.toUpperCase()}
                  </button>
              </div>
 
