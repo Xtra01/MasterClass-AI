@@ -69,9 +69,9 @@ const App: React.FC = () => {
   // Initialize Category
   useEffect(() => {
     if (activeCourse && activeCourse.curriculum.length > 0) {
-      if (!activeCategory || !activeCourse.curriculum.find(c => c.id === activeCategory)) {
+      // Don't auto-select category, let user see overview
+      if (!activeTopic) {
         setActiveCategory(activeCourse.curriculum[0].id);
-        setActiveTopic(null);
       }
       setSearchQuery(''); 
     }
@@ -151,6 +151,10 @@ const App: React.FC = () => {
 
   const handleTopicClick = (topic: Topic) => {
     setActiveTopic(topic);
+    // Find category for this topic and set it active if needed
+    const cat = activeCourse.curriculum.find(c => c.topics.some(t => t.id === topic.id));
+    if (cat) setActiveCategory(cat.id);
+
     // If no cache, or cache is in wrong language, regenerate
     const cached = contentCache[topic.id];
     const isCached = !!cached;
@@ -279,6 +283,7 @@ const App: React.FC = () => {
 
   const handleSelectCourse = (courseId: string) => {
     setActiveCourseId(courseId);
+    setActiveTopic(null); // Reset topic to show overview
     setView('course');
   };
 
@@ -592,7 +597,6 @@ const App: React.FC = () => {
                     const isCached = !!cached;
                     
                     // Logic to visualize if cached content matches current language
-                    // Assuming static content (TR) has no language tag.
                     const isLangMatch = isCached && (cached.language === language || (!cached.language && language === 'tr'));
 
                     return (
@@ -656,6 +660,12 @@ const App: React.FC = () => {
                   </div>
                </div>
             )}
+            {!activeTopic && (
+               <div className="flex flex-col animate-fadeIn">
+                   <span className="text-sm font-bold text-white">Course Overview</span>
+                   <span className="text-xs text-gray-500">{getTranslatedTitle(activeCourse.title, activeCourse.id)}</span>
+               </div>
+            )}
           </div>
           
           <div className="flex items-center gap-3">
@@ -700,15 +710,68 @@ const App: React.FC = () => {
         {/* Content Body */}
         <div className="flex-1 overflow-y-auto relative">
           {!activeTopic && (
-             <div className="flex flex-col items-center justify-center h-full p-8 text-center animate-fadeIn">
-                <div className="w-24 h-24 bg-[#1a1a1a] rounded-2xl flex items-center justify-center mb-8 border border-[#333]" style={{ color: activeCourse.themeColor, boxShadow: `0 0 30px ${activeCourse.themeColor}20` }}>
-                  {renderIcon(activeCourse.icon)}
+             <div className="p-8 md:p-12 animate-fadeIn max-w-7xl mx-auto w-full">
+                {/* Course Header Hero */}
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mb-16 border-b border-[#2c2c2c] pb-10">
+                    <div className="w-24 h-24 md:w-32 md:h-32 bg-[#1a1a1a] rounded-2xl flex items-center justify-center border border-[#333] shadow-2xl flex-shrink-0" style={{ color: activeCourse.themeColor, boxShadow: `0 0 30px ${activeCourse.themeColor}10` }}>
+                        {renderIcon(activeCourse.icon)}
+                    </div>
+                    <div className="text-center md:text-left">
+                        <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+                            {getTranslatedTitle(activeCourse.title, activeCourse.id)}
+                        </h2>
+                        <p className="text-gray-400 text-lg md:text-xl max-w-2xl leading-relaxed">
+                            {getTranslatedDesc(activeCourse.description, activeCourse.id)}
+                        </p>
+                        <div className="mt-6 flex flex-wrap gap-3 justify-center md:justify-start">
+                             <div className="px-3 py-1 bg-[#1a1a1a] border border-[#333] rounded-full text-xs text-gray-500 font-bold uppercase tracking-wider">
+                                {filteredCurriculum.reduce((acc, cat) => acc + cat.topics.length, 0)} {t('completed').replace('TAMAMLANDI', 'TOPICS').replace('COMPLETED', 'TOPICS')}
+                             </div>
+                             <div className="px-3 py-1 bg-[#1a1a1a] border border-[#333] rounded-full text-xs text-gray-500 font-bold uppercase tracking-wider">
+                                {filteredCurriculum.length} MODULES
+                             </div>
+                        </div>
+                    </div>
                 </div>
-                <h2 className="text-5xl font-extrabold text-white mb-6 tracking-tight">{getTranslatedTitle(activeCourse.title, activeCourse.id)} <span style={{ color: activeCourse.themeColor }}>MasterClass</span></h2>
-                <p className="text-gray-400 text-lg mb-10 max-w-2xl leading-relaxed">{getTranslatedDesc(activeCourse.description, activeCourse.id)}</p>
-                
-                <div className="text-sm text-gray-500 border border-[#333] p-4 rounded-lg bg-[#161616]">
-                    <p>💡 {t('tip')}</p>
+
+                {/* Grid Curriculum Display */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {filteredCurriculum.map((cat, idx) => (
+                        <div key={cat.id} className="group flex flex-col h-full bg-[#161616] border border-[#2c2c2c] rounded-xl overflow-hidden hover:border-gray-500 transition-colors">
+                            <div className="p-4 border-b border-[#2c2c2c] bg-[#1a1a1a] flex items-center gap-3">
+                                <span style={{ color: activeCourse.themeColor }}>{getTopicIcon(cat.id)}</span>
+                                <h3 className="font-bold text-white text-sm uppercase tracking-wide">{cat.title}</h3>
+                            </div>
+                            <div className="p-4 flex-1 flex flex-col gap-2">
+                                {cat.topics.map((t) => (
+                                    <button 
+                                        key={t.id}
+                                        onClick={() => handleTopicClick(t)}
+                                        className="w-full text-left p-3 rounded hover:bg-[#252525] transition-colors flex items-start gap-3 group/topic"
+                                    >
+                                        <div className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${completedTopics.includes(t.id) ? 'bg-green-500' : 'bg-gray-600 group-hover/topic:bg-white'}`}></div>
+                                        <div>
+                                            <div className="text-sm font-medium text-gray-300 group-hover/topic:text-white transition-colors">
+                                                {t.title}
+                                            </div>
+                                            <div className="text-[10px] text-gray-500 line-clamp-1 mt-0.5">
+                                                {t.description}
+                                            </div>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="p-3 bg-[#131313] border-t border-[#2c2c2c] text-center">
+                                <button 
+                                    onClick={(e) => handleExpandCurriculum(e, cat.id)}
+                                    className="text-xs font-bold flex items-center justify-center gap-2 hover:opacity-80 transition-opacity w-full py-1"
+                                    style={{ color: activeCourse.themeColor }}
+                                >
+                                    <Wand className="w-3 h-3" /> {t('missingTopics')}
+                                </button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
              </div>
           )}
