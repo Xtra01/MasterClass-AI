@@ -135,11 +135,103 @@ export const COURSE_TRANSLATIONS: Record<string, { tr: { title: string, desc: st
     'behavioral-ai': { tr: { title: 'Davranışsal AI & Karar Mimarisi', desc: 'Psikoloji, dürtme (nudge) teorisi ve karar sistemleri.' }, en: { title: 'Behavioral AI & Decision Arch', desc: 'Psychology, nudge theory and decision systems.' } },
     'info-theory': { tr: { title: 'Pratik Bilgi Kuramı (Information Theory)', desc: 'Shannon entropisi, Fourier analizi ve anomali tespiti.' }, en: { title: 'Practical Information Theory', desc: 'Shannon entropy, Fourier analysis and anomaly detection.' } },
     'personal-agents': { tr: { title: 'Kişisel AI Ajanları', desc: 'Otonom iş akışları, multi-agent sistemler ve araç kullanımı.' }, en: { title: 'Personal AI Agents', desc: 'Autonomous workflows, multi-agent systems and tool use.' } },
-    'consultant-branding': { tr: { title: 'AI Danışman Markalaması', desc: 'Otorite inşası, içerik stratejisi ve pazar konumlandırma.' }, en: { title: 'AI Consultant Branding', desc: 'Authority building, content strategy and market positioning.' } }
+    'consultant-branding': { tr: { title: 'AI Danışman Markalaması', desc: 'Otorite inşası, içerik stratejisi ve pazar konumlandırma.' }, en: { title: 'AI Consultant Branding', desc: 'Authority building, content strategy and market positioning.' } },
+    'learning-learning': { tr: { title: 'Öğrenmeyi Öğrenmek', desc: 'Nörobilimsel temeller, hafıza teknikleri ve mental modeller.' }, en: { title: 'Learning How to Learn', desc: 'Neuroscientific foundations, memory techniques and mental models.' } },
+    'hugging-face': { tr: { title: 'Hugging Face: Zero to Hero', desc: 'Transformers, PEFT/LoRA, TGI ve Spaces ile uçtan uca LLM.' }, en: { title: 'Hugging Face: Zero to Hero', desc: 'End-to-end LLM with Transformers, PEFT/LoRA, TGI and Spaces.' } }
 };
 
 
 export const COURSES: Course[] = [
+  {
+    id: 'learning-learning',
+    title: 'Öğrenmeyi Öğrenmek',
+    description: 'Nörobilim, hafıza teknikleri, odaklanma ve ileri seviye zihinsel modeller.',
+    icon: 'LightbulbIcon',
+    themeColor: '#FFC107', // Amber
+    curriculum: [
+      {
+        id: 'foundations',
+        title: 'Bilişsel Temeller',
+        topics: [
+          { id: 'neuroscience', title: 'Öğrenmenin Nörobilimi', description: 'Sinaptik plastisite, miyelinleşme ve uzun süreli güçlenme (LTP).', level: 'Beginner' },
+          { id: 'modes', title: 'Odaklanmış vs Dağınık Mod', description: 'Barbara Oakley\'nin problem çözme modları ve geçiş stratejileri.', level: 'Intermediate' },
+          { id: 'memory-systems', title: 'Hafıza Mimarisi', description: 'Çalışma belleği, uzun süreli bellek ve bilişsel yük teorisi.', level: 'Advanced' }
+        ]
+      },
+      {
+        id: 'techniques',
+        title: 'Teknikler & Araçlar',
+        topics: [
+          { id: 'active-recall', title: 'Aktif Geri Çağırma', description: 'Pasif okuma yerine aktif test etme stratejileri.', level: 'Intermediate' },
+          { id: 'spaced-repetition', title: 'Aralıklı Tekrar (SRS)', description: 'Unutma eğrisini kırmak için Anki/SuperMemo algoritmaları.', level: 'Advanced' },
+          { id: 'memory-palace', title: 'Hafıza Sarayı (Loci Metodu)', description: 'Uzamsal hafıza ile büyük veri setlerini ezberleme.', level: 'Expert' }
+        ]
+      },
+      {
+        id: 'productivity',
+        title: 'Verimlilik & Psikoloji',
+        topics: [
+          { id: 'procrastination', title: 'Erteleme Psikolojisi', description: 'Limbik sistem vs Prefrontal korteks savaşı ve çözüm yolları.', level: 'Intermediate' },
+          { id: 'pomodoro-flow', title: 'Pomodoro ve Akış (Flow)', description: 'Dikkat yönetimi ve derinlemesine çalışma (Deep Work).', level: 'Intermediate' },
+          { id: 'habit-formation', title: 'Alışkanlık Bilimi', description: 'Atomik alışkanlıklar, tetikleyiciler ve ödül döngüleri.', level: 'Advanced' }
+        ]
+      },
+      {
+        id: 'mental-models',
+        title: 'Mental Modeller',
+        topics: [
+          { id: 'first-principles', title: 'İlk İlkeler (First Principles)', description: 'Problemleri en temel gerçeklerine indirgeyerek çözme.', level: 'Expert' },
+          { id: 'feynman-tech', title: 'Feynman Tekniği', description: 'Basitleştirerek öğrenme ve boşlukları tespit etme.', level: 'Advanced' },
+          { id: 'transfer-learning', title: 'Transfer Learning', description: 'Bir alandaki yetkinliği başka bir alana taşıma.', level: 'Expert' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'hugging-face',
+    title: 'Hugging Face: Zero to Hero',
+    description: 'Transformers, PEFT/LoRA, TGI ve Spaces ile modern NLP ekosistemi.',
+    icon: 'HuggingFaceIcon',
+    themeColor: '#FFD21E', // HF Yellow
+    curriculum: [
+      {
+        id: 'hf-hub',
+        title: 'The Hub & Ecosystem',
+        topics: [
+          { id: 'hub-intro', title: 'Model Hub & Cards', description: 'Model kartları, versiyonlama ve lisanslama (Apache 2.0 vs Llama).', level: 'Beginner' },
+          { id: 'datasets-lib', title: 'Datasets Library', description: 'Büyük veri setlerini stream etme, map/filter işlemleri ve parquet formatı.', level: 'Intermediate' },
+          { id: 'hf-cli', title: 'Hugging Face CLI & API', description: 'Komut satırı araçları ve HfApi ile programatik yönetim.', level: 'Advanced' }
+        ]
+      },
+      {
+        id: 'transformers-core',
+        title: 'Transformers Library',
+        topics: [
+          { id: 'pipelines', title: 'Pipelines & Inference', description: 'Tek satırda NLP görevleri (Sentiment, NER, Translation).', level: 'Beginner' },
+          { id: 'tokenizers', title: 'Tokenizers Deep Dive', description: 'BPE, WordPiece, SentencePiece ve vocabulary yönetimi.', level: 'Advanced' },
+          { id: 'models-config', title: 'Models & Configs', description: 'AutoModel, AutoConfig ve mimari detayları yükleme.', level: 'Intermediate' }
+        ]
+      },
+      {
+        id: 'fine-tuning',
+        title: 'Training & Fine-Tuning',
+        topics: [
+          { id: 'trainer-api', title: 'Trainer API', description: 'TrainingArguments, callbackler ve eğitim döngüsü.', level: 'Intermediate' },
+          { id: 'peft-lora', title: 'PEFT & LoRA', description: 'Düşük kaynakla büyük modelleri eğitme (Low-Rank Adaptation).', level: 'Expert' },
+          { id: 'qlora', title: 'QLoRA & Quantization', description: '4-bit quantization ile GPU belleğini optimize etme (BitsAndBytes).', level: 'Expert' }
+        ]
+      },
+      {
+        id: 'deployment',
+        title: 'Deployment & Spaces',
+        topics: [
+          { id: 'gradio', title: 'Gradio ile Demo', description: 'Python ile hızlı web arayüzleri oluşturma ve paylaşma.', level: 'Intermediate' },
+          { id: 'spaces-docker', title: 'HF Spaces & Docker', description: 'Özel Docker containerları ile Spaces üzerinde uygulama dağıtımı.', level: 'Advanced' },
+          { id: 'tgi', title: 'TGI (Text Gen Inference)', description: 'Production-ready, yüksek performanslı model sunumu (Rust tabanlı).', level: 'Expert' }
+        ]
+      }
+    ]
+  },
   {
     id: 'cloudflare',
     title: 'Cloudflare',

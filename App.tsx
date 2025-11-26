@@ -122,8 +122,8 @@ const App: React.FC = () => {
         return;
       }
 
-      // Increased delay to 2000ms to throttle requests and prevent hitting 429 error bursts
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Increased delay to 4000ms to throttle requests and prevent hitting 429 error bursts
+      await new Promise(resolve => setTimeout(resolve, 4000));
       if (!isMounted) return;
 
       const [nextTopic, ...remainingQueue] = processingQueue;

@@ -10,8 +10,8 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 // Wrapper to handle Rate Limits (429) with Exponential Backoff
 const generateWithRetry = async <T>(
     operation: () => Promise<T>, 
-    retries = 3, 
-    initialBackoff = 2000
+    retries = 5, 
+    initialBackoff = 5000
 ): Promise<T> => {
     let currentBackoff = initialBackoff;
     for (let i = 0; i < retries; i++) {
