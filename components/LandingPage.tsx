@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { Course, Language } from '../types';
 import { COURSES, LANDING_STRINGS, COURSE_TRANSLATIONS } from '../constants';
@@ -6,17 +7,21 @@ import {
   CloudflareIcon, TypeScriptIcon, DataScienceIcon, SearchIcon, RecommendationIcon,
   StrategyIcon, EngineeringIcon, GenAIIcon, EthicsIcon, PipelineIcon, ScraperIcon,
   CloudCostIcon, BotIcon, SpeedIcon, GlobalPaymentIcon, B2BSalesIcon, ApiProductIcon,
-  BrainIcon, MathIcon, AgentIcon, BrandIcon, BookOpen, Shield, Terminal, Database, Sparkles, Zap, ArrowRight, Star, Globe, LayoutGrid, Cpu, Layers
+  BrainIcon, MathIcon, AgentIcon, BrandIcon, BookOpen, Shield, Terminal, Database, Sparkles, Zap, ArrowRight, Star, Globe, LayoutGrid, Cpu, Layers, Plus
 } from './Icons';
 
 interface Props {
   onSelectCourse: (courseId: string) => void;
   language: Language;
   setLanguage: (lang: Language) => void;
+  onCreateCourse: () => void;
 }
 
-const LandingPage: React.FC<Props> = ({ onSelectCourse, language, setLanguage }) => {
+const LandingPage: React.FC<Props> = ({ onSelectCourse, language, setLanguage, onCreateCourse }) => {
   const t = LANDING_STRINGS[language];
+  const ui = language === 'tr' 
+    ? { createTitle: "Yeni Kurs Oluştur", createDesc: "Kendi müfredatınızı yapay zeka ile tasarlayın." }
+    : { createTitle: "Create New Course", createDesc: "Design your own curriculum with AI." };
 
   const renderIcon = (iconName: string) => {
     const props = { className: "w-8 h-8" };
@@ -141,6 +146,23 @@ const LandingPage: React.FC<Props> = ({ onSelectCourse, language, setLanguage })
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                
+                {/* Create New Course Card */}
+                <div 
+                    onClick={onCreateCourse}
+                    className="group relative bg-[#161616] border border-dashed border-gray-600 hover:border-white rounded-2xl p-6 cursor-pointer overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col items-center justify-center text-center min-h-[300px]"
+                >
+                    <div className="w-16 h-16 rounded-full bg-[#1f1f1f] flex items-center justify-center mb-6 group-hover:bg-white group-hover:text-black transition-colors text-gray-400">
+                        <Plus className="w-8 h-8" />
+                    </div>
+                    <h3 className="text-lg font-bold text-white mb-2 group-hover:text-current transition-colors">
+                        {ui.createTitle}
+                    </h3>
+                    <p className="text-sm text-gray-400">
+                        {ui.createDesc}
+                    </p>
+                </div>
+
                 {COURSES.map((course) => (
                     <div 
                         key={course.id}

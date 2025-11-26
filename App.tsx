@@ -2,14 +2,17 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { COURSES, STATIC_TUTORIALS, UI_STRINGS, COURSE_TRANSLATIONS } from './constants';
 import { Topic, ChatMessage, ContentCache, Course, Language } from './types';
-import { generateTutorialContent, chatWithContext, suggestMissingTopics } from './services/geminiService';
+import { generateTutorialContent, chatWithContext, suggestMissingTopics, generateCourseStructure } from './services/geminiService';
 import MarkdownRenderer from './components/MarkdownRenderer';
 import ChatBubble from './components/ChatBubble';
 import LandingPage from './components/LandingPage';
 import { 
   Logo, ChevronRight, BookOpen, Terminal, Shield, Zap, Database, Lock, Sparkles, 
   Settings, RefreshCw, XCircle, Trash, ChevronDown, Microscope, Wand, Globe, Home,
-  CloudflareIcon, TypeScriptIcon, DataScienceIcon, SearchIcon, RecommendationIcon
+  CloudflareIcon, TypeScriptIcon, DataScienceIcon, SearchIcon, RecommendationIcon,
+  StrategyIcon, EngineeringIcon, GenAIIcon, EthicsIcon, PipelineIcon, ScraperIcon,
+  CloudCostIcon, BotIcon, SpeedIcon, GlobalPaymentIcon, B2BSalesIcon, ApiProductIcon,
+  BrainIcon, MathIcon, AgentIcon, BrandIcon, Plus, Download
 } from './components/Icons';
 
 declare global {
@@ -39,12 +42,12 @@ const App: React.FC = () => {
   const [language, setLanguage] = useState<Language>('tr');
   const t = (key: string) => UI_STRINGS[language][key] || key;
 
+  // State for Mutable Curriculum
+  const [coursesState, setCoursesState] = useState<Course[]>(COURSES);
+  
   // State for Course Selection
   const [activeCourseId, setActiveCourseId] = useState<string>(COURSES[0].id);
   
-  // State for Mutable Curriculum
-  const [coursesState, setCoursesState] = useState<Course[]>(COURSES);
-
   const activeCourse = useMemo(() => coursesState.find(c => c.id === activeCourseId) || coursesState[0], [activeCourseId, coursesState]);
 
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -55,6 +58,17 @@ const App: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isCourseSelectorOpen, setIsCourseSelectorOpen] = useState(false);
   
+  // Course Creator State
+  const [isCreatorOpen, setIsCreatorOpen] = useState(false);
+  const [creatorPrompt, setCreatorPrompt] = useState('');
+  const [isCreatingCourse, setIsCreatingCourse] = useState(false);
+
+  // Offline Download State
+  const [isPackagingOffline, setIsPackagingOffline] = useState(false);
+
+  // Bulk Operations Settings
+  const [isBulkDeepDive, setIsBulkDeepDive] = useState(false);
+
   const [contentCache, setContentCache] = useState<ContentCache>(STATIC_TUTORIALS);
   
   const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
@@ -65,6 +79,22 @@ const App: React.FC = () => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [toasts, setToasts] = useState<ToastNotification[]>([]);
+
+  // Initialize Custom Courses from LocalStorage
+  useEffect(() => {
+    const savedCustomCourses = localStorage.getItem('custom_courses');
+    if (savedCustomCourses) {
+        try {
+            const parsed = JSON.parse(savedCustomCourses) as Course[];
+            // Merge custom courses avoiding duplicates
+            const existingIds = new Set(COURSES.map(c => c.id));
+            const uniqueCustom = parsed.filter(c => !existingIds.has(c.id));
+            setCoursesState([...COURSES, ...uniqueCustom]);
+        } catch (e) {
+            console.error("Failed to load custom courses", e);
+        }
+    }
+  }, []);
 
   // Initialize Category
   useEffect(() => {
@@ -84,12 +114,17 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // Queue Processor
+  // Queue Processor with Throttling for Rate Limits
   useEffect(() => {
+    let isMounted = true;
     const processQueue = async () => {
       if (processingQueue.length === 0 || activeRequests.length >= MAX_CONCURRENT_REQUESTS) {
         return;
       }
+
+      // Increased delay to 2000ms to throttle requests and prevent hitting 429 error bursts
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      if (!isMounted) return;
 
       const [nextTopic, ...remainingQueue] = processingQueue;
       
@@ -107,6 +142,8 @@ const App: React.FC = () => {
           nextTopic.language
         );
         
+        if (!isMounted) return;
+
         setContentCache(prev => ({
             ...prev,
             [nextTopic.id]: result
@@ -119,11 +156,14 @@ const App: React.FC = () => {
         console.error(e);
         addToast(nextTopic.id, t('error'), nextTopic.title, 'error');
       } finally {
-        setActiveRequests(prev => prev.filter(id => id !== nextTopic.id));
+        if (isMounted) {
+            setActiveRequests(prev => prev.filter(id => id !== nextTopic.id));
+        }
       }
     };
 
     processQueue();
+    return () => { isMounted = false; };
   }, [processingQueue, activeRequests, activeCourse, coursesState, language]);
 
   const addToast = (id: string, title: string, message: string, type: 'success' | 'info' | 'error') => {
@@ -163,9 +203,6 @@ const App: React.FC = () => {
     const isQueued = isTopicQueued(topic.id);
 
     // Note: Simulated static content doesn't have a 'language' tag by default, we assume it's TR unless we generated it.
-    // If user switches to EN, and clicks a topic that is Static (TR), we should queue it.
-    
-    // Check if it's static content (no language property usually means static TR)
     const isStaticTr = isCached && !cached.language; 
     
     if ((!isCached || isWrongLang || (language === 'en' && isStaticTr)) && !isProcessing && !isQueued) {
@@ -226,6 +263,346 @@ const App: React.FC = () => {
     }
   };
 
+  const handleCreateCourse = async () => {
+    if (!creatorPrompt.trim()) return;
+    setIsCreatingCourse(true);
+
+    try {
+        const newCourse = await generateCourseStructure(creatorPrompt, language);
+        if (newCourse) {
+            // Save to State
+            setCoursesState(prev => [...prev, newCourse]);
+            
+            // Save to LocalStorage (Persist custom courses)
+            const saved = localStorage.getItem('custom_courses');
+            const currentCustom = saved ? JSON.parse(saved) : [];
+            localStorage.setItem('custom_courses', JSON.stringify([...currentCustom, newCourse]));
+
+            addToast("create-success", t('success'), newCourse.title, 'success');
+            
+            // Switch to new course
+            setActiveCourseId(newCourse.id);
+            setActiveTopic(null);
+            setView('course');
+            setIsCreatorOpen(false);
+            setCreatorPrompt('');
+        } else {
+             addToast("create-error", t('error'), "Failed to generate course", 'error');
+        }
+    } catch (e) {
+        addToast("create-error", t('error'), "An error occurred", 'error');
+    } finally {
+        setIsCreatingCourse(false);
+    }
+  };
+
+  const handleDownloadOffline = async () => {
+    setIsPackagingOffline(true);
+    addToast("download-start", t('info'), t('offlineReady'), 'info');
+
+    // Use a timeout to allow the UI to update and show the toast before heavy processing
+    setTimeout(() => {
+        try {
+            // Robust Markdown to HTML Parser
+            // This parser is aware of Code Blocks to avoid rendering '#' inside code as headers.
+            const robustMarkdownToHtml = (md: string) => {
+                if (!md) return "";
+                
+                const lines = md.split('\n');
+                let html = "";
+                let inCodeBlock = false;
+                let codeLang = "";
+
+                lines.forEach(line => {
+                    // Code Block Start
+                    if (line.trim().startsWith('```')) {
+                        if (inCodeBlock) {
+                            // End of code block
+                            html += `</code></pre></div>\n`;
+                            inCodeBlock = false;
+                        } else {
+                            // Start of code block
+                            inCodeBlock = true;
+                            codeLang = line.trim().replace('```', '');
+                            html += `<div class="code-block"><div class="code-header">${codeLang}</div><pre><code>`;
+                        }
+                        return;
+                    }
+
+                    // If inside code block, escape HTML and preserve formatting
+                    if (inCodeBlock) {
+                        const safeLine = line
+                            .replace(/&/g, "&amp;")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;");
+                        html += safeLine + "\n";
+                        return;
+                    }
+
+                    // Markdown Processing (Only if NOT in code block)
+                    
+                    // Headers
+                    if (line.startsWith('### ')) {
+                        html += `<h3 class="topic-h3">${line.replace('### ', '')}</h3>\n`;
+                    } else if (line.startsWith('## ')) {
+                        html += `<h2 class="topic-h2">${line.replace('## ', '')}</h2>\n`;
+                    } else if (line.startsWith('# ')) {
+                        html += `<h1 class="topic-h1">${line.replace('# ', '')}</h1>\n`;
+                    } 
+                    // Blockquotes / Tips
+                    else if (line.startsWith('> ')) {
+                        html += `<blockquote class="topic-quote">${processInlineMarkdown(line.replace('> ', ''))}</blockquote>\n`;
+                    }
+                    // Lists
+                    else if (line.trim().startsWith('- ')) {
+                        html += `<li class="topic-li">${processInlineMarkdown(line.replace('- ', ''))}</li>\n`;
+                    }
+                    // Empty lines (Paragraph breaks)
+                    else if (line.trim() === '') {
+                        html += `<br/>`;
+                    }
+                    // Paragraphs
+                    else {
+                        html += `<p class="topic-p">${processInlineMarkdown(line)}</p>\n`;
+                    }
+                });
+
+                return html;
+            };
+
+            // Helper to process inline markdown (**bold**, `code`)
+            const processInlineMarkdown = (text: string) => {
+                return text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+                    .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>') // Inline Code
+                    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>'); // Links
+            };
+
+            const courseTitle = getTranslatedTitle(activeCourse.title, activeCourse.id);
+            
+            // Generate TOC and Content
+            let tocHtml = `
+                <div class="toc-container">
+                    <h2 class="toc-title">İçindekiler / Table of Contents</h2>
+                    <ul class="toc-list">
+            `;
+            
+            let contentHtml = "";
+
+            activeCourse.curriculum.forEach((cat, catIndex) => {
+                const catTitle = getTranslatedTitle(cat.title, cat.id);
+                
+                // TOC Category
+                tocHtml += `<li class="toc-category">${catTitle}</li>`;
+                
+                // Content Category Header
+                contentHtml += `
+                    <div class="category-section">
+                        <h1 class="category-title">${catTitle}</h1>
+                        <div class="category-divider"></div>
+                    </div>
+                `;
+                
+                cat.topics.forEach((topic, topicIndex) => {
+                     const topicTitle = getTranslatedTitle(topic.title, topic.id);
+                     const cached = contentCache[topic.id];
+                     
+                     // TOC Topic link
+                     tocHtml += `<li class="toc-topic"><a href="#topic-${topic.id}">${topicTitle}</a></li>`;
+                     
+                     // Content Topic Body
+                     contentHtml += `<div id="topic-${topic.id}" class="topic-container">`;
+                     contentHtml += `<div class="topic-header-row"><span class="topic-badge">${topic.level}</span></div>`;
+                     
+                     if (cached && (cached.language === language || !cached.language)) {
+                         contentHtml += robustMarkdownToHtml(cached.content);
+                     } else {
+                         contentHtml += `<h2 class="topic-h2">${topicTitle}</h2>`;
+                         contentHtml += `<div class="missing-content">⚠️ Content not generated yet.</div>`;
+                     }
+                     contentHtml += `</div>`;
+                });
+            });
+            tocHtml += `</ul></div>`;
+
+            const fullHtml = `
+            <!DOCTYPE html>
+            <html lang="${language}">
+            <head>
+                <meta charset="UTF-8">
+                <title>${courseTitle} - MasterClass AI eBook</title>
+                <style>
+                    /* Reset & Base */
+                    * { box-sizing: border-box; }
+                    body { 
+                        background-color: #0d0d0d; 
+                        color: #e0e0e0; 
+                        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+                        line-height: 1.6; 
+                        margin: 0; 
+                        padding: 0; 
+                    }
+                    a { color: ${activeCourse.themeColor}; text-decoration: none; }
+                    a:hover { text-decoration: underline; }
+
+                    /* Container */
+                    .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+                    /* Cover Page */
+                    .cover { 
+                        height: 90vh; 
+                        display: flex; 
+                        flex-direction: column; 
+                        justify-content: center; 
+                        align-items: center; 
+                        text-align: center; 
+                        border-bottom: 1px solid #333;
+                        margin-bottom: 50px;
+                        background: radial-gradient(circle at center, #1a1a1a 0%, #0d0d0d 100%);
+                    }
+                    .cover h1 { 
+                        font-size: 4rem; 
+                        margin: 0; 
+                        background: linear-gradient(to right, ${activeCourse.themeColor}, #fff); 
+                        -webkit-background-clip: text; 
+                        -webkit-text-fill-color: transparent; 
+                        font-weight: 800;
+                    }
+                    .cover p { font-size: 1.5rem; color: #888; margin-top: 20px; }
+                    .cover .meta { font-size: 0.9rem; color: #555; margin-top: 50px; font-family: monospace; }
+
+                    /* TOC */
+                    .toc-container { background: #161616; padding: 30px; border-radius: 12px; border: 1px solid #333; margin-bottom: 60px; }
+                    .toc-title { border-bottom: 1px solid #444; padding-bottom: 10px; margin-top: 0; color: white; }
+                    .toc-list { list-style: none; padding: 0; }
+                    .toc-category { font-weight: bold; color: ${activeCourse.themeColor}; margin-top: 20px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
+                    .toc-topic { margin-left: 20px; margin-top: 5px; color: #bbb; }
+                    .toc-topic a { color: #bbb; transition: color 0.2s; }
+                    .toc-topic a:hover { color: white; }
+
+                    /* Content Styling */
+                    .category-section { text-align: center; margin: 80px 0 40px 0; }
+                    .category-title { font-size: 2.5rem; color: ${activeCourse.themeColor}; margin-bottom: 10px; }
+                    .category-divider { height: 4px; width: 100px; background: ${activeCourse.themeColor}; margin: 0 auto; border-radius: 2px; opacity: 0.5; }
+
+                    .topic-container { 
+                        background: #161616; 
+                        padding: 40px; 
+                        border-radius: 12px; 
+                        border: 1px solid #2a2a2a; 
+                        margin-bottom: 50px; 
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+                    }
+                    .topic-header-row { margin-bottom: 20px; }
+                    .topic-badge { 
+                        background: #333; 
+                        color: #aaa; 
+                        padding: 4px 8px; 
+                        border-radius: 4px; 
+                        font-size: 0.75rem; 
+                        font-weight: bold; 
+                        text-transform: uppercase; 
+                        border: 1px solid #444;
+                    }
+
+                    /* Typography */
+                    .topic-h1 { font-size: 2.2rem; color: white; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 0; }
+                    .topic-h2 { font-size: 1.8rem; color: white; margin-top: 40px; margin-bottom: 15px; }
+                    .topic-h3 { font-size: 1.4rem; color: ${activeCourse.themeColor}; margin-top: 30px; margin-bottom: 10px; }
+                    .topic-p { color: #ccc; margin-bottom: 16px; font-size: 1.05rem; }
+                    .topic-li { margin-left: 20px; color: #ccc; margin-bottom: 8px; list-style-type: disc; }
+                    .topic-quote { 
+                        border-left: 4px solid ${activeCourse.themeColor}; 
+                        background: rgba(255,255,255,0.03); 
+                        padding: 15px 20px; 
+                        margin: 20px 0; 
+                        font-style: italic; 
+                        color: #ddd; 
+                    }
+
+                    /* Code Blocks */
+                    .code-block { 
+                        background: #0a0a0a; 
+                        border-radius: 8px; 
+                        border: 1px solid #333; 
+                        margin: 20px 0; 
+                        overflow: hidden; 
+                    }
+                    .code-header { 
+                        background: #1f1f1f; 
+                        padding: 5px 15px; 
+                        font-size: 0.75rem; 
+                        color: #888; 
+                        font-family: monospace; 
+                        border-bottom: 1px solid #333; 
+                        text-transform: uppercase;
+                    }
+                    pre { margin: 0; padding: 15px; overflow-x: auto; }
+                    code { font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 0.9rem; color: #a5d6ff; }
+                    .inline-code { 
+                        background: #2d2d2d; 
+                        color: #ffab70; 
+                        padding: 2px 6px; 
+                        border-radius: 4px; 
+                        font-family: monospace; 
+                        font-size: 0.9em; 
+                    }
+                    
+                    /* Utility */
+                    .missing-content { 
+                        padding: 20px; 
+                        border: 1px dashed #555; 
+                        color: #777; 
+                        text-align: center; 
+                        border-radius: 8px; 
+                        background: #111;
+                    }
+                    .footer { text-align: center; margin-top: 80px; color: #555; font-size: 0.8rem; border-top: 1px solid #222; padding-top: 20px;}
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="cover">
+                        <h1>${courseTitle}</h1>
+                        <p>MasterClass AI Generated eBook</p>
+                        <div class="meta">
+                            Generated on ${new Date().toLocaleDateString()}<br/>
+                            Personal Use Only
+                        </div>
+                    </div>
+
+                    ${tocHtml}
+                    ${contentHtml}
+
+                    <div class="footer">
+                        &copy; ${new Date().getFullYear()} Universal AI MasterClass Platform. All Rights Reserved.<br/>
+                        Generated by AI.
+                    </div>
+                </div>
+            </body>
+            </html>
+            `;
+
+            const blob = new Blob([fullHtml], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${courseTitle.replace(/\s+/g, '_')}_MasterClass.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            addToast("download-done", t('success'), "Download Started", 'success');
+        } catch (e) {
+            console.error(e);
+            addToast("download-err", t('error'), "Failed to package course", 'error');
+        } finally {
+            setIsPackagingOffline(false);
+        }
+    }, 1000);
+  };
+
   const handleRegenerateCategory = () => {
     if (!activeCategory) return;
     const cat = activeCourse.curriculum.find(c => c.id === activeCategory);
@@ -233,8 +610,8 @@ const App: React.FC = () => {
 
     const newItems = cat.topics.filter(t => !isTopicQueued(t.id) && !isTopicProcessing(t.id));
     if (newItems.length > 0) {
-        setProcessingQueue(prev => [...prev, ...newItems.map(t => ({...t, language}))]);
-        addToast("bulk-cat", t('regenerateCat'), `${newItems.length} topics`, "info");
+        setProcessingQueue(prev => [...prev, ...newItems.map(t => ({...t, language, isDeepDive: isBulkDeepDive}))]);
+        addToast("bulk-cat", t('regenerateCat'), `${newItems.length} topics (${isBulkDeepDive ? 'Deep' : 'Std'})`, "info");
     }
     setIsSettingsOpen(false);
   };
@@ -253,8 +630,8 @@ const App: React.FC = () => {
         allTopics.forEach(t => delete newCache[t.id]);
         setContentCache(newCache);
 
-        setProcessingQueue(prev => [...prev, ...newItems.map(t => ({...t, language}))]);
-        addToast("bulk-all", t('regenerateAll'), `${newItems.length} topics queued`, "info");
+        setProcessingQueue(prev => [...prev, ...newItems.map(t => ({...t, language, isDeepDive: isBulkDeepDive}))]);
+        addToast("bulk-all", t('regenerateAll'), `${newItems.length} topics queued (${isBulkDeepDive ? 'Deep' : 'Std'})`, "info");
     } else {
         addToast("bulk-all-empty", t('queue'), "Full", "info");
     }
@@ -265,6 +642,7 @@ const App: React.FC = () => {
       setProcessingQueue([]);
       setContentCache(STATIC_TUTORIALS);
       setCoursesState(COURSES); 
+      localStorage.removeItem('custom_courses'); // Also clear custom courses on factory reset
       addToast("reset", t('factoryReset'), t('success'), "success");
       setIsSettingsOpen(false);
   };
@@ -325,13 +703,30 @@ const App: React.FC = () => {
   };
 
   const renderIcon = (iconName: string) => {
+      const props = { className: "w-5 h-5" };
       switch(iconName) {
-          case 'CloudflareIcon': return <CloudflareIcon />;
-          case 'TypeScriptIcon': return <TypeScriptIcon />;
-          case 'DataScienceIcon': return <DataScienceIcon />;
-          case 'SearchIcon': return <SearchIcon />;
-          case 'RecommendationIcon': return <RecommendationIcon />;
-          default: return <BookOpen />;
+        case 'CloudflareIcon': return <CloudflareIcon {...props} />;
+        case 'TypeScriptIcon': return <TypeScriptIcon {...props} />;
+        case 'DataScienceIcon': return <DataScienceIcon {...props} />;
+        case 'SearchIcon': return <SearchIcon {...props} />;
+        case 'RecommendationIcon': return <RecommendationIcon {...props} />;
+        case 'StrategyIcon': return <StrategyIcon {...props} />;
+        case 'EngineeringIcon': return <EngineeringIcon {...props} />;
+        case 'GenAIIcon': return <GenAIIcon {...props} />;
+        case 'EthicsIcon': return <EthicsIcon {...props} />;
+        case 'PipelineIcon': return <PipelineIcon {...props} />;
+        case 'ScraperIcon': return <ScraperIcon {...props} />;
+        case 'CloudCostIcon': return <CloudCostIcon {...props} />;
+        case 'BotIcon': return <BotIcon {...props} />;
+        case 'SpeedIcon': return <SpeedIcon {...props} />;
+        case 'GlobalPaymentIcon': return <GlobalPaymentIcon {...props} />;
+        case 'B2BSalesIcon': return <B2BSalesIcon {...props} />;
+        case 'ApiProductIcon': return <ApiProductIcon {...props} />;
+        case 'BrainIcon': return <BrainIcon {...props} />;
+        case 'MathIcon': return <MathIcon {...props} />;
+        case 'AgentIcon': return <AgentIcon {...props} />;
+        case 'BrandIcon': return <BrandIcon {...props} />;
+        default: return <BookOpen {...props} />;
       }
   };
 
@@ -385,17 +780,100 @@ const App: React.FC = () => {
 
   if (view === 'landing') {
       return (
-          <LandingPage 
-            onSelectCourse={handleSelectCourse} 
-            language={language}
-            setLanguage={setLanguage}
-          />
+          <>
+            <LandingPage 
+                onSelectCourse={handleSelectCourse} 
+                language={language}
+                setLanguage={setLanguage}
+                onCreateCourse={() => setIsCreatorOpen(true)}
+            />
+            {/* Creator Modal (Also available in Landing) */}
+            {isCreatorOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md animate-fadeIn" onClick={() => setIsCreatorOpen(false)}>
+                    <div className="bg-[#1a1a1a] border border-[#333] rounded-2xl p-8 w-[600px] shadow-2xl relative" onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-2xl font-bold text-white flex items-center gap-3">
+                                <Sparkles className="text-purple-400" /> {t('createModalTitle')}
+                            </h3>
+                            <button onClick={() => setIsCreatorOpen(false)} className="text-gray-500 hover:text-white"><XCircle /></button>
+                        </div>
+                        
+                        <div className="mb-6">
+                            <textarea
+                                value={creatorPrompt}
+                                onChange={(e) => setCreatorPrompt(e.target.value)}
+                                placeholder={t('createPlaceholder')}
+                                className="w-full h-32 bg-[#121212] border border-[#333] rounded-lg p-4 text-white resize-none focus:outline-none focus:border-purple-500 transition-colors"
+                            />
+                        </div>
+
+                        <div className="flex justify-end gap-3">
+                            <button onClick={() => setIsCreatorOpen(false)} className="px-4 py-2 text-gray-400 hover:text-white transition-colors">
+                                {t('close')}
+                            </button>
+                            <button 
+                                onClick={handleCreateCourse}
+                                disabled={isCreatingCourse || !creatorPrompt.trim()}
+                                className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-lg transition-all disabled:opacity-50 flex items-center gap-2"
+                            >
+                                {isCreatingCourse ? (
+                                    <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> {t('creating')}</>
+                                ) : (
+                                    <>{t('createBtn')} <ChevronRight /></>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+          </>
       );
   }
 
   return (
     <div className="flex h-screen bg-[#0d0d0d] text-gray-100 overflow-hidden font-sans relative">
       <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none z-0"></div>
+
+      {/* Creator Modal (Also available in App View if needed via sidebar) */}
+      {isCreatorOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md animate-fadeIn" onClick={() => setIsCreatorOpen(false)}>
+                    <div className="bg-[#1a1a1a] border border-[#333] rounded-2xl p-8 w-[600px] shadow-2xl relative" onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-2xl font-bold text-white flex items-center gap-3">
+                                <Sparkles className="text-purple-400" /> {t('createModalTitle')}
+                            </h3>
+                            <button onClick={() => setIsCreatorOpen(false)} className="text-gray-500 hover:text-white"><XCircle /></button>
+                        </div>
+                        
+                        <div className="mb-6">
+                            <textarea
+                                value={creatorPrompt}
+                                onChange={(e) => setCreatorPrompt(e.target.value)}
+                                placeholder={t('createPlaceholder')}
+                                className="w-full h-32 bg-[#121212] border border-[#333] rounded-lg p-4 text-white resize-none focus:outline-none focus:border-purple-500 transition-colors"
+                            />
+                        </div>
+
+                        <div className="flex justify-end gap-3">
+                            <button onClick={() => setIsCreatorOpen(false)} className="px-4 py-2 text-gray-400 hover:text-white transition-colors">
+                                {t('close')}
+                            </button>
+                            <button 
+                                onClick={handleCreateCourse}
+                                disabled={isCreatingCourse || !creatorPrompt.trim()}
+                                className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-lg transition-all disabled:opacity-50 flex items-center gap-2"
+                            >
+                                {isCreatingCourse ? (
+                                    <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div> {t('creating')}</>
+                                ) : (
+                                    <>{t('createBtn')} <ChevronRight /></>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+        )}
+
 
       {/* Settings Modal */}
       {isSettingsOpen && (
@@ -411,6 +889,29 @@ const App: React.FC = () => {
                               <button onClick={() => setLanguage('tr')} className={`px-3 py-1 rounded text-xs font-bold transition-all ${language === 'tr' ? 'bg-[#F38020] text-white' : 'text-gray-500'}`}>TR</button>
                               <button onClick={() => setLanguage('en')} className={`px-3 py-1 rounded text-xs font-bold transition-all ${language === 'en' ? 'bg-[#F38020] text-white' : 'text-gray-500'}`}>EN</button>
                           </div>
+                      </div>
+
+                      <button onClick={handleDownloadOffline} disabled={isPackagingOffline} className="w-full flex items-center justify-between p-3 bg-[#252525] hover:bg-[#2c2c2c] rounded-lg transition-colors text-left group">
+                          <div>
+                              <div className="text-sm font-semibold text-white group-hover:text-cf-orange flex items-center gap-2">
+                                  {isPackagingOffline ? t('processing') : t('downloadOffline')}
+                              </div>
+                              <div className="text-xs text-gray-500">{t('downloadOfflineDesc')}</div>
+                          </div>
+                          {isPackagingOffline ? <div className="w-4 h-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin"></div> : <Download className="text-gray-500 group-hover:text-cf-orange" />}
+                      </button>
+
+                      <div className="flex items-center justify-between p-3 bg-[#1f1f1f] border border-[#333] rounded-lg mb-3">
+                          <span className="text-sm font-bold text-gray-300 flex items-center gap-2">
+                              <Microscope className={isBulkDeepDive ? "text-purple-400" : "text-gray-500"} /> 
+                              {t('deepDive')}
+                          </span>
+                          <button 
+                              onClick={() => setIsBulkDeepDive(!isBulkDeepDive)}
+                              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${isBulkDeepDive ? 'bg-purple-600' : 'bg-gray-700'}`}
+                          >
+                              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isBulkDeepDive ? 'translate-x-6' : 'translate-x-1'}`} />
+                          </button>
                       </div>
 
                       <button onClick={handleRegenerateCategory} className="w-full flex items-center justify-between p-3 bg-[#252525] hover:bg-[#2c2c2c] rounded-lg transition-colors text-left group">
@@ -494,7 +995,7 @@ const App: React.FC = () => {
                         {renderIcon(activeCourse.icon)}
                     </div>
                     <div className={`text-left ${!sidebarOpen && 'hidden'}`}>
-                        <h1 className="font-bold text-lg tracking-tight text-white leading-none">{getTranslatedTitle(activeCourse.title, activeCourse.id)}</h1>
+                        <h1 className="font-bold text-lg tracking-tight text-white leading-none truncate w-40">{getTranslatedTitle(activeCourse.title, activeCourse.id)}</h1>
                         <span className="text-[10px] text-gray-500 font-bold tracking-widest uppercase">MasterClass AI</span>
                     </div>
                 </div>
@@ -503,9 +1004,25 @@ const App: React.FC = () => {
 
             {/* Course Dropdown */}
             {isCourseSelectorOpen && sidebarOpen && (
-                <div className="absolute top-full left-0 w-full bg-[#1a1a1a] border-b border-[#2c2c2c] shadow-2xl z-50 animate-fadeIn">
-                    <div className="max-h-[300px] overflow-y-auto">
-                        {COURSES.map(course => (
+                <div className="absolute top-full left-0 w-full bg-[#1a1a1a] border-b border-[#2c2c2c] shadow-2xl z-50 animate-fadeIn max-h-[400px] overflow-y-auto">
+                    {/* New Course Button in Dropdown */}
+                    <button
+                        onClick={() => {
+                            setIsCreatorOpen(true);
+                            setIsCourseSelectorOpen(false);
+                        }}
+                        className="w-full flex items-center gap-3 p-4 bg-[#1a1a1a] hover:bg-[#252525] border-b border-[#2c2c2c] transition-colors group"
+                    >
+                        <div className="w-8 h-8 rounded-full border border-dashed border-gray-500 group-hover:border-white flex items-center justify-center text-gray-500 group-hover:text-white">
+                            <Plus className="w-4 h-4" />
+                        </div>
+                        <div className="text-left">
+                            <div className="text-sm font-bold text-white group-hover:text-purple-400">{t('createCourse')}</div>
+                        </div>
+                    </button>
+
+                    <div>
+                        {coursesState.map(course => (
                             <button
                                 key={course.id}
                                 onClick={() => {

@@ -22,6 +22,9 @@ export const UI_STRINGS: Record<Language, Record<string, string>> = {
     deepDive: "DERİNLEMESİNE ARAŞTIR",
     refresh: "YENİLE",
     downloadPdf: "PDF İNDİR",
+    downloadOffline: "TÜM KURSU İNDİR (e-Kitap)",
+    downloadOfflineDesc: "Tüm müfredatı tek bir HTML dosyası olarak indir. Çevrimdışı çalışır.",
+    offlineReady: "Kurs Paketleniyor...",
     completed: "TAMAMLANDI",
     complete: "TAMAMLA",
     selectKey: "API Anahtarı Seç",
@@ -32,7 +35,13 @@ export const UI_STRINGS: Record<Language, Record<string, string>> = {
     error: "Hata",
     success: "Başarılı",
     info: "Bilgi",
-    backToHome: "Ana Sayfaya Dön"
+    backToHome: "Ana Sayfaya Dön",
+    createCourse: "Yeni Kurs Oluştur",
+    createCourseDesc: "Kendi müfredatınızı yapay zeka ile tasarlayın.",
+    createModalTitle: "Yapay Zeka Kurs Mimarı",
+    createPlaceholder: "Ne öğrenmek istiyorsunuz? (örn: 'Advanced Rust', 'İtalyan Mutfağı', 'Kuantum Fiziği')",
+    createBtn: "Müfredatı Tasarla & Oluştur",
+    creating: "Müfredat Hazırlanıyor..."
   },
   en: {
     settingsTitle: "Settings & Tools",
@@ -53,6 +62,9 @@ export const UI_STRINGS: Record<Language, Record<string, string>> = {
     deepDive: "DEEP DIVE RESEARCH",
     refresh: "REFRESH",
     downloadPdf: "DOWNLOAD PDF",
+    downloadOffline: "DOWNLOAD FULL COURSE (e-Book)",
+    downloadOfflineDesc: "Download entire curriculum as a single HTML file. Works offline.",
+    offlineReady: "Packaging Course...",
     completed: "COMPLETED",
     complete: "COMPLETE",
     selectKey: "Select API Key",
@@ -63,7 +75,13 @@ export const UI_STRINGS: Record<Language, Record<string, string>> = {
     error: "Error",
     success: "Success",
     info: "Info",
-    backToHome: "Back to Home"
+    backToHome: "Back to Home",
+    createCourse: "Create New Course",
+    createCourseDesc: "Design your own curriculum with AI.",
+    createModalTitle: "AI Course Architect",
+    createPlaceholder: "What do you want to learn? (e.g., 'Advanced Rust', 'Italian Cuisine', 'Quantum Physics')",
+    createBtn: "Design & Build Curriculum",
+    creating: "Architecting Curriculum..."
   }
 };
 

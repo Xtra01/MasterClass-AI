@@ -1,8 +1,52 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
-import { GeneratedContent, ChatMessage, Topic, Language } from '../types';
+import { GoogleGenAI, Type, GenerateContentResponse } from "@google/genai";
+import { GeneratedContent, ChatMessage, Topic, Language, Course } from '../types';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+// Helper function for delay
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Wrapper to handle Rate Limits (429) with Exponential Backoff
+const generateWithRetry = async <T>(
+    operation: () => Promise<T>, 
+    retries = 3, 
+    initialBackoff = 2000
+): Promise<T> => {
+    let currentBackoff = initialBackoff;
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await operation();
+        } catch (error: any) {
+            // Robust check for 429/Quota errors including nested objects
+            const isRateLimit = 
+                error?.status === 429 || 
+                error?.code === 429 || 
+                error?.error?.code === 429 || 
+                error?.error?.status === 'RESOURCE_EXHAUSTED' ||
+                (error?.message && (
+                    error.message.includes('429') || 
+                    error.message.toLowerCase().includes('quota') || 
+                    error.message.includes('RESOURCE_EXHAUSTED')
+                ));
+
+            if (isRateLimit) {
+                if (i < retries - 1) {
+                    console.warn(`API Rate Limit Hit. Retrying in ${currentBackoff}ms... (Attempt ${i + 1}/${retries})`);
+                    await delay(currentBackoff);
+                    currentBackoff *= 2; // Exponential backoff
+                    continue;
+                } else {
+                    console.error("Max retries exceeded for rate limit.");
+                }
+            }
+            
+            // If it's the last retry or not a rate limit error, throw it.
+            throw error;
+        }
+    }
+    throw new Error("Max retries exceeded due to rate limiting.");
+};
 
 const getInstructorPersona = (courseTitle: string, language: Language) => {
     const role = language === 'tr' 
@@ -58,7 +102,8 @@ export const generateTutorialContent = async (topicTitle: string, level: string,
       : `COURSE: ${courseTitle}\nTOPIC: ${topicTitle}\nLEVEL: ${level}\nMODE: ${isDeepDive ? 'DEEP DIVE RESEARCH (EXPERT MODE)' : 'Standard Tutorial'}\nPlease create comprehensive, technical, and educational content in Markdown format for this topic.`;
 
   try {
-    const response = await ai.models.generateContent({
+    // Wrap API call with retry logic
+    const response = await generateWithRetry<GenerateContentResponse>(() => ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt,
       config: {
@@ -77,7 +122,7 @@ export const generateTutorialContent = async (topicTitle: string, level: string,
           required: ["title", "content", "relatedTopics"]
         }
       }
-    });
+    }));
 
     const text = response.text;
     if (!text) throw new Error("No response from AI");
@@ -87,7 +132,9 @@ export const generateTutorialContent = async (topicTitle: string, level: string,
     console.error("Gemini API Error:", error);
     return {
       title: language === 'tr' ? "Hata" : "Error",
-      content: language === 'tr' ? "İçerik oluşturulurken bir hata meydana geldi." : "An error occurred while generating content.",
+      content: language === 'tr' 
+        ? "İçerik oluşturulurken bir hata meydana geldi veya API limiti aşıldı. Lütfen biraz bekleyip tekrar deneyin.\n\nAPI Error: " + (error as any)?.message 
+        : "An error occurred while generating content or API limit exceeded. Please wait and try again.\n\nAPI Error: " + (error as any)?.message,
       relatedTopics: [],
       language
     };
@@ -107,7 +154,7 @@ export const suggestMissingTopics = async (
     : `COURSE: ${courseTitle}\nCATEGORY: ${categoryTitle}\nEXISTING TOPICS: ${existingTitles}\nSuggest 2-4 NEW advanced missing topics to make this curriculum "Complete". Must not overlap with existing ones.`;
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await generateWithRetry<GenerateContentResponse>(() => ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt,
       config: {
@@ -129,7 +176,7 @@ export const suggestMissingTopics = async (
           }
         }
       }
-    });
+    }));
 
     const text = response.text;
     if (!text) return [];
@@ -145,6 +192,88 @@ export const suggestMissingTopics = async (
     return [];
   }
 };
+
+export const generateCourseStructure = async (
+    userPrompt: string, 
+    language: Language = 'tr'
+): Promise<Course | null> => {
+    const prompt = language === 'tr'
+      ? `KULLANICI İSTEĞİ: "${userPrompt}"\nBu istek doğrultusunda kapsamlı bir MasterClass Kurs Müfredatı oluştur.`
+      : `USER REQUEST: "${userPrompt}"\nCreate a comprehensive MasterClass Course Curriculum based on this request.`;
+
+    const availableIcons = [
+        'CloudflareIcon', 'TypeScriptIcon', 'DataScienceIcon', 'SearchIcon', 
+        'RecommendationIcon', 'StrategyIcon', 'EngineeringIcon', 'GenAIIcon', 
+        'EthicsIcon', 'PipelineIcon', 'ScraperIcon', 'CloudCostIcon', 'BotIcon', 
+        'SpeedIcon', 'GlobalPaymentIcon', 'B2BSalesIcon', 'ApiProductIcon', 
+        'BrainIcon', 'MathIcon', 'AgentIcon', 'BrandIcon', 'BookOpen', 'Shield', 
+        'Terminal', 'Database', 'Sparkles', 'Zap'
+    ];
+
+    try {
+        const response = await generateWithRetry<GenerateContentResponse>(() => ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+            config: {
+                systemInstruction: language === 'tr'
+                    ? `Sen bir "Eğitim Mimarı"sın. Kullanıcının istediği konuda sıfırdan bir kurs yapısı oluştur.
+                       1. 'id' benzersiz ve slug formatında olsun.
+                       2. 'icon' alanı şu listeden EN UYGUN olanı seçilmeli: ${availableIcons.join(', ')}. Eğer hiçbiri uymazsa 'BookOpen' seç.
+                       3. 'themeColor' o konuya uygun profesyonel bir HEX kodu olsun.
+                       4. 'curriculum' en az 4 kategori ve her kategoride en az 3 konu içermeli.
+                       5. Seviyeler 'Beginner', 'Intermediate', 'Advanced', 'Expert' olabilir.`
+                    : `You are an "Education Architect". Create a course structure from scratch based on the user request.
+                       1. 'id' must be unique and slug format.
+                       2. 'icon' must be the BEST FIT from this list: ${availableIcons.join(', ')}. If none fit, use 'BookOpen'.
+                       3. 'themeColor' should be a professional HEX code suitable for the topic.
+                       4. 'curriculum' must have at least 4 categories with 3 topics each.
+                       5. Levels can be 'Beginner', 'Intermediate', 'Advanced', 'Expert'.`,
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        id: { type: Type.STRING },
+                        title: { type: Type.STRING },
+                        description: { type: Type.STRING },
+                        icon: { type: Type.STRING },
+                        themeColor: { type: Type.STRING },
+                        curriculum: {
+                            type: Type.ARRAY,
+                            items: {
+                                type: Type.OBJECT,
+                                properties: {
+                                    id: { type: Type.STRING },
+                                    title: { type: Type.STRING },
+                                    topics: {
+                                        type: Type.ARRAY,
+                                        items: {
+                                            type: Type.OBJECT,
+                                            properties: {
+                                                id: { type: Type.STRING },
+                                                title: { type: Type.STRING },
+                                                description: { type: Type.STRING },
+                                                level: { type: Type.STRING }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    required: ["id", "title", "description", "icon", "themeColor", "curriculum"]
+                }
+            }
+        }));
+
+        const text = response.text;
+        if (!text) return null;
+
+        return JSON.parse(text) as Course;
+    } catch (e) {
+        console.error("Course Generation Error:", e);
+        return null;
+    }
+}
 
 export const chatWithContext = async (
   message: string, 
